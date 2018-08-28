@@ -16,7 +16,7 @@ class CreateServiceDetailsTable extends Migration
         Schema::create('service_details', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('service_id');
-            $table->integer('employe_id');
+            $table->integer('employee_id');
             $table->integer('manager_id');
             $table->timestamps();
         });
