@@ -109,5 +109,15 @@ class UserController extends Controller {
 		return Response::json($success);
 	}
 
+	public function logout() {
+			if(Auth::check()):
+					Auth::user()->AauthAcessToken()->delete();
+					return Response::json(["success"=>"Vous êtes bien déconnecté"]);
+			endif;
+	}
 	
+	public function all() {
+			$users = User::select('id', 'lastname','firstname','email','user_type_id')->paginate(25);
+			return Response::json($users);
+	}
 }
