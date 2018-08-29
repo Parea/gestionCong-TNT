@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Admin' => $baseDir . '/app/Admin.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Employee' => $baseDir . '/app/Employee.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
@@ -18,8 +19,9 @@ return array(
     'App\\Http\\Controllers\\EmployeeController' => $baseDir . '/app/Http/Controllers/EmployeeController.php',
     'App\\Http\\Controllers\\FormTimeoffController' => $baseDir . '/app/Http/Controllers/FormTimeoffController.php',
     'App\\Http\\Controllers\\ServiceController' => $baseDir . '/app/Http/Controllers/ServiceController.php',
+    'App\\Http\\Controllers\\ServiceDetailController' => $baseDir . '/app/Http/Controllers/ServiceDetailController.php',
     'App\\Http\\Controllers\\TimeoffCountController' => $baseDir . '/app/Http/Controllers/TimeoffCountController.php',
-    'App\\Http\\Controllers\\UserTimeoffController' => $baseDir . '/app/Http/Controllers/UserTimeoffController.php',
+    'App\\Http\\Controllers\\UserController' => $baseDir . '/app/Http/Controllers/UserController.php',
     'App\\Http\\Controllers\\UserTypeController' => $baseDir . '/app/Http/Controllers/UserTypeController.php',
     'App\\Http\\Controllers\\ValidationTimeoffController' => $baseDir . '/app/Http/Controllers/ValidationTimeoffController.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',
@@ -35,9 +37,9 @@ return array(
     'App\\Providers\\EventServiceProvider' => $baseDir . '/app/Providers/EventServiceProvider.php',
     'App\\Providers\\RouteServiceProvider' => $baseDir . '/app/Providers/RouteServiceProvider.php',
     'App\\Service' => $baseDir . '/app/Service.php',
+    'App\\ServiceDetail' => $baseDir . '/app/ServiceDetail.php',
     'App\\TimeoffCount' => $baseDir . '/app/TimeoffCount.php',
     'App\\User' => $baseDir . '/app/User.php',
-    'App\\UserTimeoff' => $baseDir . '/app/UserTimeoff.php',
     'App\\UserType' => $baseDir . '/app/UserType.php',
     'App\\ValidationTimeoff' => $baseDir . '/app/ValidationTimeoff.php',
     'Carbon\\Carbon' => $vendorDir . '/nesbot/carbon/src/Carbon/Carbon.php',

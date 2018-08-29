@@ -408,6 +408,7 @@ class ComposerStaticInitea53aa4311f55c690bd8b19a7f46a975
     );
 
     public static $classMap = array (
+        'App\\Admin' => __DIR__ . '/../..' . '/app/Admin.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Employee' => __DIR__ . '/../..' . '/app/Employee.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
@@ -420,8 +421,9 @@ class ComposerStaticInitea53aa4311f55c690bd8b19a7f46a975
         'App\\Http\\Controllers\\EmployeeController' => __DIR__ . '/../..' . '/app/Http/Controllers/EmployeeController.php',
         'App\\Http\\Controllers\\FormTimeoffController' => __DIR__ . '/../..' . '/app/Http/Controllers/FormTimeoffController.php',
         'App\\Http\\Controllers\\ServiceController' => __DIR__ . '/../..' . '/app/Http/Controllers/ServiceController.php',
+        'App\\Http\\Controllers\\ServiceDetailController' => __DIR__ . '/../..' . '/app/Http/Controllers/ServiceDetailController.php',
         'App\\Http\\Controllers\\TimeoffCountController' => __DIR__ . '/../..' . '/app/Http/Controllers/TimeoffCountController.php',
-        'App\\Http\\Controllers\\UserTimeoffController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserTimeoffController.php',
+        'App\\Http\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserController.php',
         'App\\Http\\Controllers\\UserTypeController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserTypeController.php',
         'App\\Http\\Controllers\\ValidationTimeoffController' => __DIR__ . '/../..' . '/app/Http/Controllers/ValidationTimeoffController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
@@ -437,9 +439,9 @@ class ComposerStaticInitea53aa4311f55c690bd8b19a7f46a975
         'App\\Providers\\EventServiceProvider' => __DIR__ . '/../..' . '/app/Providers/EventServiceProvider.php',
         'App\\Providers\\RouteServiceProvider' => __DIR__ . '/../..' . '/app/Providers/RouteServiceProvider.php',
         'App\\Service' => __DIR__ . '/../..' . '/app/Service.php',
+        'App\\ServiceDetail' => __DIR__ . '/../..' . '/app/ServiceDetail.php',
         'App\\TimeoffCount' => __DIR__ . '/../..' . '/app/TimeoffCount.php',
         'App\\User' => __DIR__ . '/../..' . '/app/User.php',
-        'App\\UserTimeoff' => __DIR__ . '/../..' . '/app/UserTimeoff.php',
         'App\\UserType' => __DIR__ . '/../..' . '/app/UserType.php',
         'App\\ValidationTimeoff' => __DIR__ . '/../..' . '/app/ValidationTimeoff.php',
         'Carbon\\Carbon' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Carbon.php',

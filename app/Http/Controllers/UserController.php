@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Admin;
 use App\Employee;
 use App\Service;
+use App\ServiceDetail;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
@@ -84,7 +86,7 @@ class UserController extends Controller {
 		endif;
 	}
 
-	public function fillStudent(Request $request) {
+	public function fillEmployee(Request $request) {
 		$validator = Validator::make($request->all(), [
 			'service_id' => 'required',
 			'user_id' => 'required',
@@ -119,5 +121,56 @@ class UserController extends Controller {
 	public function all() {
 			$users = User::select('id', 'lastname','firstname','email','user_type_id')->paginate(25);
 			return Response::json($users);
+	}
+
+	public function listUsersAdmin() {
+		if(Auth::user()->user_type_id == 1):
+			$users = User::where('users.user_type_id', '=', 1)
+			->paginate(25);
+			//On récupère les formations en cours que le formation a
+			foreach($users as $key=>$user):
+					$services = Admin::where([
+									['admins.user_id','=',$user->id]
+							])
+							->groupBy('admins.function')
+							->pluck('admins.function')->toArray();
+					$users[$key]->function = $formations;
+			endforeach;
+			return Response::json($users);
+		endif;
+	}
+
+	public function listUsersManager(){
+		if(Auth::user()->user_type_id == 1):
+			$users = User::where('users.user_type_id', '=', 3)
+			->paginate(25);
+			//On récupère les formations en cours que le formation a
+			foreach($users as $key=>$user):
+					$serviceIds = ServiceDetail::where([
+									['service_details.manager_id','=',$user->id]
+							])
+							->groupBy('service_details.service_id')
+							->pluck('service_details.service_id')->toArray();
+					$users[$key]->services = $services;
+			endforeach;
+			return Response::json($users);
+		endif;
+  }
+
+	public function listUsersStudent(){
+		if(Auth::user()->user_type_id == 1):
+			$users = User::where('users.user_type_id', '=', 4)
+			->paginate(25);
+			//On récupère les formations en cours que le formation a
+			foreach($users as $key=>$user):
+					$serviceIds = Employee::where([
+									['employees.user_id','=',$user->id]
+							])
+							->groupBy('employees.service_id')
+							->pluck('employees.service_id')->toArray();
+					$users[$key]->formations = $formations;
+			endforeach;
+			return Response::json($users);
+		endif;
 	}
 }
