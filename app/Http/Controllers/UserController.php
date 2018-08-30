@@ -21,9 +21,10 @@ class UserController extends Controller {
 
 	//Cet fonction permet a l'utilisateur de ce connecter avec son email et mot de passe
 	public function login() {
+		
 		if(Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
 			$user = Auth::user();
-			$employee = ($user->user_type_id == 4)?Employee::select('*')->where('user_id', $user->id)->where('active', 1)->get()->first():null;
+			$employee = ($user->user_type_id == 3)?Employee::select('*')->where('user_id', $user->id)->where('active', 1)->get()->first():null;
 
 			$success['token'] = $user->createToken('Laravel')->accessToken;
 			$success['lastname'] = $user->lastname;
@@ -36,7 +37,7 @@ class UserController extends Controller {
 			return Response::json([$success]);
 		}
 		else {
-			return reponse()->json(['error'=>'Non autorisé'],401);
+			return Response::json(['error'=>'Non autoriser'],401);
 		}
 	}
 
@@ -157,7 +158,7 @@ class UserController extends Controller {
 		endif;
   }
 
-	public function listUsersStudent(){
+	public function listUsersEmployee(){
 		if(Auth::user()->user_type_id == 1):
 			$users = User::where('users.user_type_id', '=', 4)
 			->paginate(25);

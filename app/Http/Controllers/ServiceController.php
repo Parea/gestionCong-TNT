@@ -55,9 +55,9 @@ class ServiceController extends Controller {
   }
 
   public function getServicesOfManager() {
-    $manager = Auth::user();
+    $manager = Auth::employee();
 
-    if($manager->user_type_id == 3):
+    if($manager->manager == 1):
       $myServices = ServiceDetail::
         select(DB::raw('DISTINCT(service_details.service_id,
         services.name,
@@ -75,6 +75,39 @@ class ServiceController extends Controller {
 
         $myServices[$key]['employees'] = $employee;
       endforeach;
+      return Response::json($myServices);
+    else:
+        return Response::json(["Erreur : "=>"Vous n'avez pas les droits"]);
+    endif;
+  }
+
+  public function getAllServicesForDirector(){
+    $manager = Auth::user();
+
+    if($manager->user_type_id == 2):
+      $myServices = Service::all()->toArray();
+      foreach($myServices as $key=> $myService):
+        $employees = User::select('service_details.employee_id')
+        ->join('service_details','service_details.employee_id','users.id')
+        ->grouptBy('service_detals.employee_id')
+        ->where('service_details.service_id',$myService['id'])
+        ->get();
+
+        $managers = User::select('service_details.manager_id')
+        ->join('service_details','service_details.manager_id','users.id')
+        ->groupBy('service_details.manager_id')
+        ->where('service_details.service_id',$myService['id'])
+        ->get();
+
+        $timeoffs = Employee::where('service_details.employee_id', $myService['id'])
+        ->join('employees','employee.id','service_details.employee_id')
+        ->get();
+
+        $myServices[$key]['total_employees'] = $employees->count();
+        $myServices[$key]['total_managers'] = $managers->count();
+        $myServices[$key]['total_timeoffs'] = $timeoffs->count();
+      endforeach;
+
       return Response::json($myServices);
     else:
         return Response::json(["Erreur : "=>"Vous n'avez pas les droits"]);
