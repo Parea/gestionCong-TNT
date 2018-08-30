@@ -11,6 +11,13 @@ class AdminTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        DB::table('admins')->insert([
+            'user_id' => 4,
+            'function' => "Comptable",
+        ]);
+        DB::table('admins')->insert([
+            'user_id' => 2,
+            'function' => "Directeur",
+        ]);
     }
 }

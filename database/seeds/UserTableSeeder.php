@@ -43,6 +43,16 @@ class UserTableSeeder extends Seeder
             'updated_at' => '2018-07-05 12:03:37'
         ]);
         DB::table('users')->insert([
+            'lastname' => 'MOU',
+            'firstname' => 'Sandrine',
+            'email' => 'sandrine.mou@hotmail.fr',
+            'password' => bcrypt('sandrinemou'),
+            'user_type_id' => 3,
+            'avatar' => 'npc.png',
+            'created_at' => '2018-07-05 12:03:37',
+            'updated_at' => '2018-07-05 12:03:37'
+        ]);
+        DB::table('users')->insert([
          'lastname' => 'TAIE',
          'firstname' => 'Taataparea',
          'email' => 'parea.taie@hotmail.fr',

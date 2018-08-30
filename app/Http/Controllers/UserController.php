@@ -21,10 +21,12 @@ class UserController extends Controller {
 
 	//Cet fonction permet a l'utilisateur de ce connecter avec son email et mot de passe
 	public function login() {
-		
 		if(Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
 			$user = Auth::user();
-			$employee = ($user->user_type_id == 3)?Employee::select('*')->where('user_id', $user->id)->where('active', 1)->get()->first():null;
+			$employee = ($user->user_type_id == 3)?Employee::select('*')
+			->where('user_id', $user->id)
+			->where('active', 1)
+			->get()->first():null;
 
 			$success['token'] = $user->createToken('Laravel')->accessToken;
 			$success['lastname'] = $user->lastname;
@@ -34,10 +36,10 @@ class UserController extends Controller {
 			$success['avatar'] = $user->avatar;
 			$success['employee_id'] = ($employee)?$employee->id:0;
 			$success['service_id'] = ($employee)?$employee->service_id:0;
-			return Response::json([$success]);
+			return Response::json($success);
 		}
-		else {
-			return Response::json(['error'=>'Non autoriser'],401);
+		else{
+			return response()->json(['error'=>'Unauthorised'], 401);
 		}
 	}
 
@@ -71,7 +73,7 @@ class UserController extends Controller {
 
 			$user = user::create($input);
 			$employee = Employee::select('*')->where('user_id', $user->id)->where('active', 1)->get()->first();
-			dd($employee);
+			//dd($employee);
 
 			$success['token'] =  $user->createToken('Laravel')->accessToken;
 				$success['id'] =  $user->id;
@@ -80,7 +82,7 @@ class UserController extends Controller {
 				$success['email'] =  $user->email;
 				$success['user_type_id'] =  $user->user_type_id;
 				$success['employee_id'] =  $employee['user_id'];
-				dd($success);
+				//dd($success);
 				return Response::json($success);
 		else:
 			return response::json(["error"=>"Vous n'avez pas les droits"]);
