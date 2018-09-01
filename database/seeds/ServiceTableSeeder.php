@@ -30,5 +30,9 @@ class ServiceTableSeeder extends Seeder
             'name' => 'Service commercial',
             'color' => 'yellow'
         ]);
+        DB::table('services')->insert([
+            'name' => 'Direction',
+            'color' => 'purple'
+        ]);
     }
 }

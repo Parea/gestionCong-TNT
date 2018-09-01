@@ -17,12 +17,12 @@ class CreateEmployeesTable extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->integer('service_id');
-            $table->integer('timeoff_granted');
-            $table->integer('timeoff_in_progress');
-            $table->integer('taken_timeoff');
-            $table->integer('total_timeoff');
+            $table->integer('timeoff_granted')->nullable();
+            $table->integer('timeoff_in_progress')->nullable();
+            $table->integer('taken_timeoff')->nullable();
+            $table->integer('total_timeoff')->nullable();
             $table->integer('active')->default(0);
-            $table->integer('manager')->defautlt(0);
+            $table->integer('manager')->nullable();
             $table->timestamps();
         });
     }

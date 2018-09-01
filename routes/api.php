@@ -46,7 +46,29 @@ use Illuminate\Http\Request;
      Route::get('users/manager','UserController@listUsersManager');
  
      /*
-     * Affiliation d'un student à une formation
+     * Affiliation d'un employé à un service
      */
     Route::post('fillemployee', 'UserController@fillEmployee');
+
+    //***************Routes concernant le controlleur Employee****************************//
+    //************************************************************************************//
+
+    //=======================Récupération de tous les employées
+    Route::get('employees','EmployeeController@all');
+    //=======================Récupération d'un employé par sont ID
+    Route::get('employee/{employeeID}','EmployeeController@show');
+    //=======================Modification d'un employé
+    Route::post('employee/create','EmployeeController@store');
+    //=======================Suppréssion d'un employé
+    Route::delete('employee/{employeeID}','EmployeeController@destroy');
+    //=======================Modification d'un employé
+    Route::put('employee','EmployeeController@store');
+
+    //======================= Récupération des inServices de l'employé connecter => service + validation
+    Route::get('getServices', 'EmployeeController@getTimeoffAuthUser');
+    Route::get('getFormationForAdmin/{ServiceId}', 'EmployeeController@getTimeoffByService');
+
+    Route::get('getEmployeesOfService/{ServiceId}', 'EmployeeController@getEmployeesByServiceId');
+
+    Route::get('getEmployeeDatas/{userId}/ofService/{ServiceId}', 'EmployeeController@getEmployeeTimeoffsByService');
 });

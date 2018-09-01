@@ -17,8 +17,9 @@ class UserTableSeeder extends Seeder
             'firstname' => 'admin',
             'email' => 'admin@hotmail.fr',
             'password' => bcrypt('admin'),
-            'user_type_id' => 1,
             'avatar' => 'npc.png',
+            'gender' => '',
+            'user_type_id' => 1,
             'created_at' => '2018-07-05 12:03:37',
             'updated_at' => '2018-07-05 12:03:37'
         ]);
@@ -27,8 +28,9 @@ class UserTableSeeder extends Seeder
             'firstname' => 'Paul',
             'email' => 'paul.dugue@hotmail.fr',
             'password' => bcrypt('pauldugue'),
-            'user_type_id' => 2,
             'avatar' => 'npc.png',
+            'gender' => 'homme',
+            'user_type_id' => 2,
             'created_at' => '2018-07-05 12:03:37',
             'updated_at' => '2018-07-05 12:03:37'
         ]);
@@ -37,8 +39,9 @@ class UserTableSeeder extends Seeder
             'firstname' => 'Roonui',
             'email' => 'roonui.adams@hotmail.fr',
             'password' => bcrypt('adamsroonui'),
-            'user_type_id' => 3,
             'avatar' => 'npc.png',
+            'gender' => 'homme',
+            'user_type_id' => 3,
             'created_at' => '2018-07-05 12:03:37',
             'updated_at' => '2018-07-05 12:03:37'
         ]);
@@ -47,8 +50,9 @@ class UserTableSeeder extends Seeder
             'firstname' => 'Sandrine',
             'email' => 'sandrine.mou@hotmail.fr',
             'password' => bcrypt('sandrinemou'),
-            'user_type_id' => 3,
             'avatar' => 'npc.png',
+            'gender' => 'femme',
+            'user_type_id' => 3,
             'created_at' => '2018-07-05 12:03:37',
             'updated_at' => '2018-07-05 12:03:37'
         ]);
@@ -57,8 +61,9 @@ class UserTableSeeder extends Seeder
          'firstname' => 'Taataparea',
          'email' => 'parea.taie@hotmail.fr',
          'password' => bcrypt('pareataie'),
-         'user_type_id' => 3,
          'avatar' => 'npc.png',
+         'gender' => 'homme',
+         'user_type_id' => 3,
          'created_at' => '2018-07-05 12:03:37',
          'updated_at' => '2018-07-05 12:03:37'
         ]);
@@ -67,8 +72,9 @@ class UserTableSeeder extends Seeder
             'firstname' => 'Apetahi',
             'email' => 'apetahi.maui@hotmail.fr',
             'password' => bcrypt('apetahimaui'),
-            'user_type_id' => 3,
             'avatar' => 'npc.png',
+            'gender' => 'femme',
+            'user_type_id' => 3,
             'created_at' => '2018-07-05 12:03:37',
             'updated_at' => '2018-07-05 12:03:37'
         ]);
@@ -77,8 +83,42 @@ class UserTableSeeder extends Seeder
             'firstname' => 'Cedric',
             'email' => 'cedric.tkt@hotmail.fr',
             'password' => bcrypt('cedtkt'),
-            'user_type_id' => 3,
             'avatar' => 'npc.png',
+            'gender' => 'homme',
+            'user_type_id' => 3,
+            'created_at' => '2018-07-05 12:03:37',
+            'updated_at' => '2018-07-05 12:03:37'
+        ]);
+        DB::table('users')->insert([
+            'lastname' => 'TAIE',
+            'firstname' => 'Boris',
+            'email' => 'boris.taie@hotmail.fr',
+            'password' => bcrypt('boristaie'),
+            'avatar' => 'npc.png',
+            'gender' => 'homme',
+            'user_type_id' => 3,
+            'created_at' => '2018-07-05 12:03:37',
+            'updated_at' => '2018-07-05 12:03:37'
+        ]);
+        DB::table('users')->insert([
+            'lastname' => 'TATA',
+            'firstname' => 'Lolo',
+            'email' => 'tata.lolot@hotmail.fr',
+            'password' => bcrypt('tatalolo'),
+            'avatar' => 'npc.png',
+            'gender' => 'femme',
+            'user_type_id' => 3,
+            'created_at' => '2018-07-05 12:03:37',
+            'updated_at' => '2018-07-05 12:03:37'
+        ]);
+        DB::table('users')->insert([
+            'lastname' => 'TARIHAA',
+            'firstname' => 'Teraitea',
+            'email' => 'tarihaa.terai@hotmail.fr',
+            'password' => bcrypt('tarihaaterai'),
+            'avatar' => 'npc.png',
+            'gender' => 'homme',
+            'user_type_id' => 3,
             'created_at' => '2018-07-05 12:03:37',
             'updated_at' => '2018-07-05 12:03:37'
         ]);

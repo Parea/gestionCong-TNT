@@ -16,8 +16,10 @@ class CreateValidationTimeoffsTable extends Migration
         Schema::create('validation_timeoffs', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('form_timeoff_id');
+            $table->integer('employee_id');
             $table->integer('manager_id');
             $table->integer('validate')->default(0);
+            $table->timestamp('manager_validation_date')->nullable();
             $table->timestamps();
         });
     }

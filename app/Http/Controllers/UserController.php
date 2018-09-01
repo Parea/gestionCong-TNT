@@ -23,10 +23,7 @@ class UserController extends Controller {
 	public function login() {
 		if(Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
 			$user = Auth::user();
-			$employee = ($user->user_type_id == 3)?Employee::select('*')
-			->where('user_id', $user->id)
-			->where('active', 1)
-			->get()->first():null;
+			$employee = ($user->user_type_id == 3)?Employee::select('*')->where('user_id', $user->id)->where('active', 1)->get()->first():null;
 
 			$success['token'] = $user->createToken('Laravel')->accessToken;
 			$success['lastname'] = $user->lastname;
@@ -36,6 +33,7 @@ class UserController extends Controller {
 			$success['avatar'] = $user->avatar;
 			$success['employee_id'] = ($employee)?$employee->id:0;
 			$success['service_id'] = ($employee)?$employee->service_id:0;
+			// $success['timeoff_granted'] = ($employee)?$employee->timeoff_granted:25;
 			return Response::json($success);
 		}
 		else{
@@ -103,6 +101,8 @@ class UserController extends Controller {
 		$employeData = [
 			'user_id' => $input['user_id'],
 			'service_id' => $input['service_id'],
+			'manager' => $input['manager'],
+			'timeoff_granted' => 25,
 			'active' => 1,
 		];
 
@@ -110,6 +110,7 @@ class UserController extends Controller {
 
 		$success['user_id'] = $employee->user_id;
 		$success['service_id'] = $employee->service_id;
+		$success['timeoff_granted'] = $employee->timeoff_granted;
 
 		return Response::json($success);
 	}
@@ -137,7 +138,7 @@ class UserController extends Controller {
 							])
 							->groupBy('admins.function')
 							->pluck('admins.function')->toArray();
-					$users[$key]->function = $formations;
+					$users[$key]->function = $services;
 			endforeach;
 			return Response::json($users);
 		endif;
@@ -147,14 +148,13 @@ class UserController extends Controller {
 		if(Auth::user()->user_type_id == 1):
 			$users = User::where('users.user_type_id', '=', 3)
 			->paginate(25);
-			//On récupère les formations en cours que le formation a
+			//On récupère les responsable de chaque service
 			foreach($users as $key=>$user):
-					$serviceIds = ServiceDetail::where([
-									['service_details.manager_id','=',$user->id]
-							])
-							->groupBy('service_details.service_id')
-							->pluck('service_details.service_id')->toArray();
-					$users[$key]->services = $services;
+					$managerIds = Employee::where('employees.user_id','=', $user->id)
+							->groupBy('employees.manager')
+							->having('employees.manager', '=', 1)
+							->pluck('employees.manager')->toArray();
+					$users[$key]->manager = $managerIds;
 			endforeach;
 			return Response::json($users);
 		endif;
@@ -162,16 +162,16 @@ class UserController extends Controller {
 
 	public function listUsersEmployee(){
 		if(Auth::user()->user_type_id == 1):
-			$users = User::where('users.user_type_id', '=', 4)
+			$users = User::where('users.user_type_id', '=', 3)
 			->paginate(25);
-			//On récupère les formations en cours que le formation a
+			//On récupère les employées de chaque service
 			foreach($users as $key=>$user):
 					$serviceIds = Employee::where([
 									['employees.user_id','=',$user->id]
 							])
 							->groupBy('employees.service_id')
 							->pluck('employees.service_id')->toArray();
-					$users[$key]->formations = $formations;
+					$users[$key]->services = $serviceIds;
 			endforeach;
 			return Response::json($users);
 		endif;
