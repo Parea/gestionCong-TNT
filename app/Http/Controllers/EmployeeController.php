@@ -150,10 +150,10 @@ class EmployeeController extends Controller
             
             $employeeDatas['employee'] = [
                 'user_id'=> $user->id,
-                'user_firstname'=> $user->firstname,
-                'user_lastname'=> $user->lastname,
-                'user_avatar'=> $user->avatar,
-                'user_service' => $service->name,
+                'firstname'=> $user->firstname,
+                'lastname'=> $user->lastname,
+                'avatar'=> $user->avatar,
+                'service' => $service->name,
                 'timeoff_granted' => $employeeData->timeoff_granted,
                 'timeoff_in_progress' => $employeeData->timeoff_in_progress,
                 'taken_timeoff' => $employeeData->taken_timeoff,
@@ -230,5 +230,23 @@ class EmployeeController extends Controller
             $employeDatas[$i]['lastname'] = $service['lastname'];
         endforeach;
         return Response::json($serviceData);
+    }
+
+    public function getAllServices() {
+        $userAuthorized = [1, 2, 3];
+        if(in_array(Auth::user()->user_type_id, $userAuthorized)):
+            $serviceData = [];
+            $timeoffId = 0;
+            $i = -1;
+
+            $serviceData = Employee::select('employees.id as employee_id', 'users.lastname as Lastname', 'users.firstname as Firstname','services.id as service_id', 'services.name as service_name','services.color as service_color')
+            ->join('services','services.id','employees.service_id')
+            ->join('users','users.id','employees.user_id')
+            ->where('employees.active', 1)
+            ->orderBy('employees.id','desc')
+            ->get()->toArray();
+
+            return Response::json($serviceData);
+        endif;
     }
 }

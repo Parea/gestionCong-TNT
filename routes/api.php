@@ -50,6 +50,12 @@ use Illuminate\Http\Request;
      */
     Route::post('fillemployee', 'UserController@fillEmployee');
 
+     /*
+      * Routes pour les utilisateurs connecté en tant que student
+      */
+     Route::get('getAllServices', 'EmployeeController@getAllServices');
+ 
+
     //***************Routes concernant le controlleur Employee****************************//
     //************************************************************************************//
 
@@ -66,7 +72,7 @@ use Illuminate\Http\Request;
 
     //======================= Récupération des inServices de l'employé connecter => service + validation
     Route::get('getServices', 'EmployeeController@getTimeoffAuthUser');
-    Route::get('getFormationForAdmin/{ServiceId}', 'EmployeeController@getTimeoffByService');
+    // Route::get('getServiceForAdmin/{ServiceId}', 'EmployeeController@getTimeoffByService');
 
     Route::get('getEmployeesOfService/{ServiceId}', 'EmployeeController@getEmployeesByServiceId');
 
