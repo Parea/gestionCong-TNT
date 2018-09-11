@@ -27,17 +27,18 @@ use Illuminate\Http\Request;
 
  Route::group(['middleware' => 'auth:api'], function(){
     
-    /*
-     * Enregistrement d'un utilisateur
-     */
-    
     Route::post('register', 'UserController@register');
-    
+
+    Route::put('user/update', 'UserController@update');
+    /**
+     * Créer un nouveau étudiant
+     */
+    Route::post('createEmployee', 'EmployeeController@createEmployee');
+
     /**
      * Déconnexion d'un utilisateur
      */
     Route::get('logout','UserController@logout');
-
      /*
      * Les trois routes qui suivents permettent de récupérer les différents type d'utilisateur présent dans l'api
      */
@@ -77,4 +78,23 @@ use Illuminate\Http\Request;
     Route::get('getEmployeesOfService/{ServiceId}', 'EmployeeController@getEmployeesByServiceId');
 
     Route::get('getEmployeeDatas/{userId}/ofService/{ServiceId}', 'EmployeeController@getEmployeeTimeoffsByService');
+
+    Route::get('getManagerByService/{ServiceId}','EmployeeController@getManagerByService');
+
+    //=======================Récupération de toutes les FormationDetail
+    Route::get('servicedetails', 'ServiceDetailController@all');
+    //=======================Récupération d'une formationdetail par son id
+    Route::get('formationdetail/{formationdetailsId}', 'FormationDetailController@show');
+    //=======================Création d'une formationdetail
+    Route::post('formationdetail/create', 'FormationDetailController@store');
+    //=======================Supression d'une formationdetail
+    Route::delete('formationdetail/{fformationdetailsId}', 'FormationDetailController@destroy');
+    //=======================Modification d'une formationdetail
+    Route::put('formationdetail', 'FormationDetailController@store');
+    //============Récupérer les modules de l'utilisateur connecte==============================
+    Route::get('modulesByStudent', 'FormationDetailController@getModulesByAuthUser');
+    //============Récupérer les skills de l'utilisateur connecté===============================
+    Route::get('skillsByStudent', 'FormationDetailController@getSkillsByAuthUser');
+    //============Récupérer les formations d'un formateur ======================================
+    Route::get('manager/myServices', 'ServiceController@getServicesOfManager');
 });

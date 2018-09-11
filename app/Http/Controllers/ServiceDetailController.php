@@ -3,83 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\ServiceDetail;
+use App\User;
+use App\Service;
+use App\Employee;
+use App\Http\Resources\ServiceDetail as ServiceDetailR;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Response;
 
-class ServiceDetailController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+class ServiceDetailController extends Controller {
+    public function all() {
+        if(Auth::user()->user_type_id == 1):
+            $servicedetails = ServiceDetail::select('service_details.id as service_details_id','service_details.service_id as service_id','employees.id as employee_id','users.firstname as manager_id')
+            ->join('employees','employees.id','=','service_details.employee_id')
+            ->join('users','users.id','=','employees.user_id')
+            ->join('users','users.id','=','service_details.manager_id')
+            ->join('services','services.id','=','service_details.service_id')
+            ->paginate(25);
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\ServiceDetail  $serviceDetail
-     * @return \Illuminate\Http\Response
-     */
-    public function show(ServiceDetail $serviceDetail)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\ServiceDetail  $serviceDetail
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(ServiceDetail $serviceDetail)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\ServiceDetail  $serviceDetail
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, ServiceDetail $serviceDetail)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\ServiceDetail  $serviceDetail
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(ServiceDetail $serviceDetail)
-    {
-        //
+            return Response::json($servicedetails);
+        else:
+            return Response::json(["Erreur: " => "Vous n'avez pas les droits"]);
+        endif;
     }
 }

@@ -55,13 +55,11 @@ class ServiceController extends Controller {
   }
 
   public function getServicesOfManager() {
-    $manager = Auth::employee();
+    $manager = Auth::user();
 
-    if($manager->manager == 1):
+    if($manager->user_type_id == 3):
       $myServices = ServiceDetail::
-        select(DB::raw('DISTINCT(service_details.service_id,
-        services.name,
-        services.color'))
+        select(DB::raw('DISTINCT(service_details.service_id'))
       ->join('services','services.id','=','service_details.service_id')
       ->where('service_details.manager_id',$manager->id)
       ->paginate(20);

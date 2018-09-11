@@ -145,19 +145,23 @@ class UserController extends Controller {
 	}
 
 	public function listUsersManager(){
-		if(Auth::user()->user_type_id == 1):
-			$users = User::where('users.user_type_id', '=', 3)
-			->paginate(25);
-			//On récupère les responsable de chaque service
-			foreach($users as $key=>$user):
-					$managerIds = Employee::where('employees.user_id','=', $user->id)
-							->groupBy('employees.manager')
-							->having('employees.manager', '=', 1)
-							->pluck('employees.manager')->toArray();
-					$users[$key]->manager = $managerIds;
-			endforeach;
-			return Response::json($users);
-		endif;
+		$userAuthorized = [1, 2];
+			if(in_array(Auth::user()->user_type_id, $userAuthorized)):
+				$serviceData = [];
+
+				$serviceData = Employee::select('employees.id as employee_id', 
+				'users.lastname as Lastname', 
+				'users.firstname as Firstname',
+				'services.id as service_id', 
+				'services.name as service_name')
+				->join('services','services.id','employees.service_id')
+				->join('users','users.id','employees.user_id')
+				->where('employees.manager', 1)
+				->orderBy('employees.id','desc')
+				->get()->toArray();
+
+				return Response::json($serviceData);
+			endif;
   }
 
 	public function listUsersEmployee(){

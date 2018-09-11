@@ -236,13 +236,112 @@ class EmployeeController extends Controller
         $userAuthorized = [1, 2, 3];
         if(in_array(Auth::user()->user_type_id, $userAuthorized)):
             $serviceData = [];
-            $timeoffId = 0;
-            $i = -1;
 
             $serviceData = Employee::select('employees.id as employee_id', 'users.lastname as Lastname', 'users.firstname as Firstname','services.id as service_id', 'services.name as service_name','services.color as service_color')
             ->join('services','services.id','employees.service_id')
             ->join('users','users.id','employees.user_id')
             ->where('employees.active', 1)
+            ->orderBy('employees.id','desc')
+            ->get()->toArray();
+
+            return Response::json($serviceData);
+        endif;
+    }
+
+    public function createEmployee(Request $request)
+    {
+        if(Auth::user()->user_type_id == 1):
+            $validator = Validator::make($request->all(), [
+                'lastname' => 'required',
+                'firstname' => 'required',
+                'email' => 'required|email',
+                'password' => 'required|min:6',
+                'c_password' => 'required|same:password',
+                'avatar' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['error'=>$validator->errors()], 401);
+            }
+
+            if($request->hasfile('avatar')):
+            $file = $request->file('avatar');
+            $extension = $file->getClientOriginalExtension(); // getting image extension
+            $filename = substr( md5( 1 . '-' . time() ), 0, 15).'.'.$extension;
+            $file->move('uploads/images/', $filename);
+            endif;
+
+            $input = $request->all();
+            $input['avatar'] = $filename;
+            $input['user_type_id'] = 3;
+            $input['password'] = bcrypt($input['password']);
+
+            $user = User::create($input);
+
+            $employeeData = [
+                'user_id' => $user->id,
+                'service_id' => $input['service_id'],
+                'active' => 1,
+            ];
+
+            $employeeCreate = Employee::create($employeeData);
+
+
+            $employee = Employee::select('*')->where('user_id', $user->id)->where('active', 1)->get()->first();
+            // dd($employee);
+
+            $success['token'] =  $user->createToken('Laravel')->accessToken;
+            $success['id'] =  $user->id;
+            $success['lastname'] =  $user->lastname;
+            $success['firstname'] =  $user->firstname;
+            $success['email'] =  $user->email;
+            // $success['gender'] =  $user->gender;
+            $success['user_type_id'] =  $user->user_type_id;
+            $success['employee_id'] =  $employee['user_id'];
+            // dd($success);
+            return Response::json($success);
+        else:
+            return response::json(["error"=>"vous n'avez pas les droits"]);
+        endif;
+    }
+
+    public function getManagerByService($serviceId) {
+        $userAuthorized = [1, 2];
+        if(in_array(Auth::user()->user_type_id, $userAuthorized)):
+            $serviceData = [];
+
+            $serviceData = Employee::select('employees.id as employee_id', 
+            'users.lastname as Lastname', 
+            'users.firstname as Firstname',
+            'services.id as service_id', 
+            'services.name as service_name',
+            'employees.manager as manager_or_not-manager')
+            ->join('services','services.id','employees.service_id')
+            ->join('users','users.id','employees.user_id')
+            ->where([['employees.manager', 1],['employees.service_id','=',$serviceId]])
+            ->orderBy('employees.id','desc')
+            ->get()->toArray();
+
+            return Response::json($serviceData);
+        else:
+            return response::json(["error"=>"vous n'avez pas les droits"]);
+        endif;
+    }
+
+    public function getAgentsByManager($serviceId) {
+        $userAuthorized = [1, 2, 3];
+        if(in_array(Auth::user()->user_type_id, $userAuthorized)):
+            $serviceData = [];
+
+            $serviceData = Employee::select('employees.id as employee_id', 
+            'users.lastname as Lastname', 
+            'users.firstname as Firstname',
+            'services.id as service_id', 
+            'services.name as service_name',
+            'employees.manager as manager_or_not-manager')
+            ->join('services','services.id','employees.service_id')
+            ->join('users','users.id','employees.user_id')
+            ->where([['employees.manager', 1],['employees.service_id','=',$serviceId]])
             ->orderBy('employees.id','desc')
             ->get()->toArray();
 
