@@ -37,8 +37,9 @@ class User extends Authenticatable
 
     public static function getMyCurrentService()
     {
-        return Employee::select('employees.id as employee_id', 'services.name as service_name', 'services.id as service_id')
+        return Employee::select('employees.id as employee_id', 'users.lastname as Nom', 'users.firstname as Prenom','services.name as service_name', 'services.id as service_id')
         ->join('services', 'services.id', 'employees.service_id')
+        ->join('users','users.id','employees.user_id')
         ->where('employees.user_id', Auth::user()->id)
         ->where('employees.active', 1)
         ->orderBy('employees.id', 'desc')

@@ -63,7 +63,7 @@ class UserTableSeeder extends Seeder
          'password' => bcrypt('pareataie'),
          'avatar' => 'npc.png',
          'gender' => 'homme',
-         'user_type_id' => 3,
+         'user_type_id' => 4,
          'created_at' => '2018-07-05 12:03:37',
          'updated_at' => '2018-07-05 12:03:37'
         ]);
@@ -74,7 +74,7 @@ class UserTableSeeder extends Seeder
             'password' => bcrypt('apetahimaui'),
             'avatar' => 'npc.png',
             'gender' => 'femme',
-            'user_type_id' => 3,
+            'user_type_id' => 4,
             'created_at' => '2018-07-05 12:03:37',
             'updated_at' => '2018-07-05 12:03:37'
         ]);
@@ -85,7 +85,7 @@ class UserTableSeeder extends Seeder
             'password' => bcrypt('cedtkt'),
             'avatar' => 'npc.png',
             'gender' => 'homme',
-            'user_type_id' => 3,
+            'user_type_id' => 4,
             'created_at' => '2018-07-05 12:03:37',
             'updated_at' => '2018-07-05 12:03:37'
         ]);
@@ -96,7 +96,7 @@ class UserTableSeeder extends Seeder
             'password' => bcrypt('boristaie'),
             'avatar' => 'npc.png',
             'gender' => 'homme',
-            'user_type_id' => 3,
+            'user_type_id' => 4,
             'created_at' => '2018-07-05 12:03:37',
             'updated_at' => '2018-07-05 12:03:37'
         ]);
@@ -107,7 +107,7 @@ class UserTableSeeder extends Seeder
             'password' => bcrypt('tatalolo'),
             'avatar' => 'npc.png',
             'gender' => 'femme',
-            'user_type_id' => 3,
+            'user_type_id' => 4,
             'created_at' => '2018-07-05 12:03:37',
             'updated_at' => '2018-07-05 12:03:37'
         ]);
@@ -118,7 +118,7 @@ class UserTableSeeder extends Seeder
             'password' => bcrypt('tarihaaterai'),
             'avatar' => 'npc.png',
             'gender' => 'homme',
-            'user_type_id' => 3,
+            'user_type_id' => 4,
             'created_at' => '2018-07-05 12:03:37',
             'updated_at' => '2018-07-05 12:03:37'
         ]);

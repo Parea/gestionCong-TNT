@@ -20,8 +20,12 @@ class UserTypeTableSeeder extends Seeder
             'name' => "Directeur Géneral",
         ]);
      
+        DB::table('user_types')->insert([
+            'name' => "Responsable service",
+        ]);
+
          DB::table('user_types')->insert([
-             'name' => "Employers",
+             'name' => "Agents",
          ]);
      
      }

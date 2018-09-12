@@ -11,7 +11,7 @@ class Employee extends Model
         'user_id','service_id','timeoff_granted','timeoff_in_progress','taken_timeoff','total_timeoff','active','manager'
     ];
 
-    public static function getEmployeesByServiceId($serviceId, $toArray = 1) {
+    public static function getEmployeesByServiceId($serviceId, $toArray = 3) {
         $employeesDatas = Employee::select(
             'employees.id as employee_id',
             'employees.timeoff_granted as timeoff_granted',

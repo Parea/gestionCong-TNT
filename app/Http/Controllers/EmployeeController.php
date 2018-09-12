@@ -24,7 +24,10 @@ class EmployeeController extends Controller
         $authUserId = Auth::user()->id;
 
         if($authUserTypeId == 1):
-            $Employees = Employee::select('employees.id as id','services.id as service_id','services.name as service_name','users.id as user_id','users.firstname as user_name')
+            $Employees = Employee::select('employees.id as id',
+            'services.id as service_id',
+            'services.name as Nom_service',
+            'users.id as user_id','users.firstname as Prenom')
             ->leftjoin('services','services.id','=','employees.service_id')
             ->leftjoin('users','users.id','=','employees.user_id')
             ->paginate(25);
@@ -87,42 +90,37 @@ class EmployeeController extends Controller
     public function getTimeoffAuthUser()
     {
         $serviceData = User::getMyCurrentService();
-
         $timeoffData = Employee::getEmployeesByServiceId($serviceData->service_id);
-
+        $validation = ValidationTimeoff::where([['validation_timeoffs.employee_id', $serviceData->employee_id],['validation_timeoffs.validate', 1]])->get()->first();
         $employeDatas = [];
         $i = -1;
-
+        
         foreach ($timeoffData as $key=>$timeoff):
-                $i++;
-                // $employeDatas[$i]['service_id'] = $timeoff['service_id'];
-                $employeDatas[$i]['timeoff_granted'] = $timeoff['timeoff_granted'];
-                $employeDatas[$i]['timeoff_in_progress'] = $timeoff['timeoff_in_progress'];
-                $employeDatas[$i]['taken_timeoff'] = $timeoff['taken_timeoff'];
-                $employeDatas[$i]['taken_timeoff'] = $timeoff['taken_timeoff'];
-                $employeDatas[$i]['total_timeoff'] = $timeoff['total_timeoff'];
+            $i++;
+            $employeDatas['Congés_obtenue'] = $timeoff['timeoff_granted'];
+            $employeDatas['Congés_en_cours'] = $timeoff['timeoff_in_progress'];
+            $employeDatas['Congées_pris'] = $timeoff['taken_timeoff'];
+            $employeDatas['Congées_restant'] = $timeoff['total_timeoff'];
 
-            $validation = ValidationTimeoff::where([
-                ['validation_timeoffs.employee_id', $serviceData->employee_id]
-            ])->first();
-
-            $employeDatas[$i]['timeoffs'][] = [
-                'validations'=> ($validation)?[
-                    'validation_id' => $validation->id,
-                    'form_timeoff_id' => $validation->form_timeoff_id,
-                    'validation_accept' => $validation->validate,
-                    'manager_id' => $validation->manager_id,
-                    'manager_validation_date' => $validation->manager_validation_date,
-                ]:
+            $employeDatas['Congées_valider'] = [($validation)?[
+                    'Valider_le' => $validation->manager_validation_date,
+                    'Employee_id' => $validation->employee_id,
+                    'Validation_id' => $validation->id,
+                    'Demande_congé_id' => $validation->form_timeoff_id,
+                    'Demande_accepter' => $validation->validate,
+                    'Responsable_id' => $validation->manager_id,
+                ]
+                :
                 [
-                    'validation_id' => null,
-                    'form_timeoff_id' => null,
-                    'validation_accept' => null,
-                    'manager_id' => null,
-                    'manager_validation_date' => null,
+                    'Valider_le' => null,
+                    'Employee_id' => null,
+                    'Validation_id' => null,
+                    'Demande_congé_id' => null,
+                    'Demande_accepter' => null,
+                    'Responsable_id' => null,
                 ]
             ];
-            
+
             if($validation):
                 if($validation->employee_validation) $employeDatas[$i]['validate_timeoff']++;
                 if($validation->employee_validation) $employeDatas[$i]['taken_timeoff']++;
@@ -137,107 +135,98 @@ class EmployeeController extends Controller
     {
         $userAuthorized = [1, 2, 3];
         if(in_array(Auth::user()->user_type_id, $userAuthorized)):
-            $serviceData = User::getMyCurrentService();
             $service = Service::find($serviceId);
             $user = User::find($userId);
-            $employeeData = Employee::find($userId);
             $employee = Employee::where([['user_id',$userId],['service_id',$serviceId],['active',1]])->first();
-            $timeoffData = Employee::getEmployeesByServiceIdAndManagerId($serviceId);
-            
+            $validation = ValidationTimeoff::where([['validation_timeoffs.employee_id',$userId],['validation_timeoffs.validate', 1]])->first();
+
             $employeeDatas = [];
-            $Data = [];
             $i = -1;
-            
+
             $employeeDatas['employee'] = [
-                'user_id'=> $user->id,
-                'firstname'=> $user->firstname,
-                'lastname'=> $user->lastname,
-                'avatar'=> $user->avatar,
+                'Nom'=> $user->lastname,
+                'Prenom'=> $user->firstname,
                 'service' => $service->name,
-                'timeoff_granted' => $employeeData->timeoff_granted,
-                'timeoff_in_progress' => $employeeData->timeoff_in_progress,
-                'taken_timeoff' => $employeeData->taken_timeoff,
-                'total_timeoff' => $employeeData->total_timeoff
+                'Congées_obtenue' => $employee->timeoff_granted,
+                'Congées _en_cours' => $employee->timeoff_in_progress,
+                'Congées_pris' => $employee->taken_timeoff,
+                'Congées_restant' => $employee->total_timeoff
             ];
 
-            // foreach ($timeoffData as $key=>$timeoff):
-            //     $i++;
-            //     $Data[$i]['timeoff_granted'] = $timeoff['timeoff_granted'];
-            //     $Data[$i]['timeoff_in_progress'] = $timeoff['timeoff_in_progress'];
-            //     $Data[$i]['taken_timeoff'] = $timeoff['taken_timeoff'];
-            //     $Data[$i]['taken_timeoff'] = $timeoff['taken_timeoff'];
-            //     $Data[$i]['total_timeoff'] = $timeoff['total_timeoff'];
-
-
-            //     $validation = ValidationTimeoff::where([
-            //         ['validation_timeoffs.employee_id', $serviceData->employee_id]
-            //     ])->first();
-
-            //     $Data[$i]['timeoffs'][] = [
-            //         'validations'=> ($validation)?[
-            //             'validation_id' => $validation->id,
-            //             'form_timeoff_id' => $validation->form_timeoff_id,
-            //             'validation_accept' => $validation->validate,
-            //             'manager_id' => $validation->manager_id,
-            //             'manager_validation_date' => $validation->manager_validation_date,
-            //         ]:
-            //         [
-            //             'validation_id' => null,
-            //             'form_timeoff_id' => null,
-            //             'validation_accept' => null,
-            //             'manager_id' => null,
-            //             'manager_validation_date' => null,
-            //         ]
-            //     ];
-                
-            //     if($validation):
-            //         if($validation->employee_validation) $employeDatas[$i]['validate_timeoff']++;
-            //         if($validation->employee_validation) $employeDatas[$i]['taken_timeoff']++;
-            //     endif;
-            // endforeach;
+            foreach($employee as $key=>$timeoff):              
+                $employeeDatas['employee']['Congées_valider'] = [($validation)?[
+                    'Employee_id' => $validation->employee_id,
+                    'Responsable_id' => $validation->manager_id,
+                    // 'Validation_id' => $validation->id,
+                    'Demande_congé_id' => $validation->form_timeoff_id,
+                    'Demande_accepter' => $validation->validate,
+                    'Valider_le' => $validation->manager_validation_date,
+                ]
+                :
+                [
+                    'Employee_id' => null,
+                    'Responsable_id' => null,
+                    // 'Validation_id' => null,
+                    'Demande_congé_id' => null,
+                    'Demande_accepter' => null,
+                    'Valider_le' => null,
+                ]
+            ];
+            endforeach;
                 return response::json($employeeDatas);
             else:
-                return Response::json(["Erreur : "=>"Vous n'avez pas les droits"]);
+                return Response::json(["Erreur: "=>"Vous n'avez pas les droits"]);
             endif;
 
     }
 
     public function getEmployeesByServiceId($serviceId)
     {
-        // $employeeData = Employee::find($userId);
-        $serviceData = Employee::select(
-            'employees.user_id as employee_id',
-            'employees.service_id as service_id',
-            'services.name as service_name',
-            'users.id as user_id',
-            'users.lastname as lastname',
-            'users.firstname as firstname'
-        )
-        ->join('users', 'users.id', '=', 'employees.user_id')
-        ->join('services', 'services.id', '=', 'employees.service_id')
-        ->where([
-            ['employees.active', '=', '1'],
-            ['services.id', '=', $serviceId],
-        ])->get()->toArray();
+        $userAuthorized = [1, 2, 3];
+        if(in_array(Auth::user()->user_type_id, $userAuthorized)):
+            $serviceData = Employee::select(
+                'users.id as user_id',
+                'users.lastname as Nom',
+                'users.firstname as Prenom',
+                'employees.user_id as employee_id',
+                'employees.service_id as service_id',
+                'services.name as Nom_service')
+            ->join('users', 'users.id', '=', 'employees.user_id')
+            ->join('services', 'services.id', '=', 'employees.service_id')
+            ->where([
+                ['employees.active', '=', '1'],
+                ['services.id', '=', $serviceId],
+            ])->get()->toArray();
 
-        $employeDatas = [];
-        $moduleId = 0;
-        $i = -1;
+            $employeDatas = [];
+            $moduleId = 0;
+            $i = -1;
 
-        foreach($serviceData as $key=>$service):
-            //dd($skill);
-            $i++;
-            $employeDatas[$i]['lastname'] = $service['lastname'];
-        endforeach;
-        return Response::json($serviceData);
+            // foreach($serviceData as $key=>$service):
+            //     //dd($skill);
+            //     $i++;
+            //     $employeDatas[$i]['lastname'] = $service['lastname'];
+            // endforeach;
+            return Response::json($serviceData);
+        else:
+            return response::json(["Erreur"=>"Vous n'avez pas les droits"]);
+        endif;
     }
 
     public function getAllServices() {
-        $userAuthorized = [1, 2, 3];
+        $userAuthorized = [1, 2];
         if(in_array(Auth::user()->user_type_id, $userAuthorized)):
             $serviceData = [];
 
-            $serviceData = Employee::select('employees.id as employee_id', 'users.lastname as Lastname', 'users.firstname as Firstname','services.id as service_id', 'services.name as service_name','services.color as service_color')
+            $serviceData = Employee::select('employees.id as employee_id',
+            'users.lastname as Nom',
+            'users.firstname as Prenom',
+            'services.id as service_id',
+            'services.name as Nom_service',
+            'employees.timeoff_granted as congées obtenu',
+            'employees.taken_timeoff as congées pris',
+            'employees.total_timeoff as congées restant',
+            'services.color as service_color')
             ->join('services','services.id','employees.service_id')
             ->join('users','users.id','employees.user_id')
             ->where('employees.active', 1)
@@ -245,6 +234,56 @@ class EmployeeController extends Controller
             ->get()->toArray();
 
             return Response::json($serviceData);
+        else:
+            return response::json(["Erreur"=>"Vous n'avez pas les droits"]);
+        endif;
+    }
+    //Récupère le responsable de service
+    public function getManagerByService($serviceId) {
+        $userAuthorized = [1, 2];
+        if(in_array(Auth::user()->user_type_id, $userAuthorized)):
+            $serviceData = [];
+
+            $serviceData = Employee::select('employees.id as employee_id',
+            'users.lastname as Nom',
+            'users.firstname as Prenom',
+            'services.id as service_id',
+            'services.name as Nom_service')
+            ->join('services','services.id','employees.service_id')
+            ->join('users','users.id','employees.user_id')
+            ->where([['users.user_type_id','=',3],['employees.service_id','=',$serviceId]])
+            ->orderBy('employees.id','desc')
+            ->get()->toArray();
+
+            return Response::json($serviceData);
+        else:
+            return response::json(["Erreur"=>"Vous n'avez pas les droits"]);
+        endif;
+    }
+
+    //Récupère les agents de chaque responsable de service
+    public function getAgentsByManager($serviceId) {
+        $userAuthorized = [2, 3];
+        if(in_array(Auth::user()->user_type_id, $userAuthorized)):
+            $serviceData = [];
+
+            $serviceData = Employee::select('employees.id as employee_id',
+            'users.lastname as Nom',
+            'users.firstname as Prenom',
+            'services.id as service_id',
+            'services.name as Nom_service',
+            'employees.timeoff_granted as congées obtenu',
+            'employees.taken_timeoff as congées pris',
+            'employees.total_timeoff as congées restant')
+            ->join('services','services.id','employees.service_id')
+            ->join('users','users.id','employees.user_id')
+            ->where([['users.user_type_id','=',4],['employees.service_id','=',$serviceId]])
+            ->orderBy('employees.id','desc')
+            ->get()->toArray();
+
+            return Response::json($serviceData);
+        else:
+            return response::json(["Erreur"=>"Vous n'avez pas les droits"]);
         endif;
     }
 
@@ -261,7 +300,7 @@ class EmployeeController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json(['error'=>$validator->errors()], 401);
+                return response()->json(['Erreur'=>$validator->errors()], 401);
             }
 
             if($request->hasfile('avatar')):
@@ -301,51 +340,8 @@ class EmployeeController extends Controller
             // dd($success);
             return Response::json($success);
         else:
-            return response::json(["error"=>"vous n'avez pas les droits"]);
+            return response::json(["Erreur"=>"Vous n'avez pas les droits"]);
         endif;
     }
 
-    public function getManagerByService($serviceId) {
-        $userAuthorized = [1, 2];
-        if(in_array(Auth::user()->user_type_id, $userAuthorized)):
-            $serviceData = [];
-
-            $serviceData = Employee::select('employees.id as employee_id', 
-            'users.lastname as Lastname', 
-            'users.firstname as Firstname',
-            'services.id as service_id', 
-            'services.name as service_name',
-            'employees.manager as manager_or_not-manager')
-            ->join('services','services.id','employees.service_id')
-            ->join('users','users.id','employees.user_id')
-            ->where([['employees.manager', 1],['employees.service_id','=',$serviceId]])
-            ->orderBy('employees.id','desc')
-            ->get()->toArray();
-
-            return Response::json($serviceData);
-        else:
-            return response::json(["error"=>"vous n'avez pas les droits"]);
-        endif;
-    }
-
-    public function getAgentsByManager($serviceId) {
-        $userAuthorized = [1, 2, 3];
-        if(in_array(Auth::user()->user_type_id, $userAuthorized)):
-            $serviceData = [];
-
-            $serviceData = Employee::select('employees.id as employee_id', 
-            'users.lastname as Lastname', 
-            'users.firstname as Firstname',
-            'services.id as service_id', 
-            'services.name as service_name',
-            'employees.manager as manager_or_not-manager')
-            ->join('services','services.id','employees.service_id')
-            ->join('users','users.id','employees.user_id')
-            ->where([['employees.manager', 1],['employees.service_id','=',$serviceId]])
-            ->orderBy('employees.id','desc')
-            ->get()->toArray();
-
-            return Response::json($serviceData);
-        endif;
-    }
 }

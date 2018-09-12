@@ -71,15 +71,17 @@ use Illuminate\Http\Request;
     //=======================Modification d'un employé
     Route::put('employee','EmployeeController@store');
 
-    //======================= Récupération des inServices de l'employé connecter => service + validation
-    Route::get('getServices', 'EmployeeController@getTimeoffAuthUser');
+    //======================= Récupération des infos des congées de l'employé connecter => service + validation
+    Route::get('getservices', 'EmployeeController@getTimeoffAuthUser');
     // Route::get('getServiceForAdmin/{ServiceId}', 'EmployeeController@getTimeoffByService');
 
-    Route::get('getEmployeesOfService/{ServiceId}', 'EmployeeController@getEmployeesByServiceId');
+    Route::get('getemployeesbyservice/{ServiceId}', 'EmployeeController@getEmployeesByServiceId');
 
-    Route::get('getEmployeeDatas/{userId}/ofService/{ServiceId}', 'EmployeeController@getEmployeeTimeoffsByService');
+    Route::get('getemployeedatas/{userId}/ofservice/{ServiceId}', 'EmployeeController@getEmployeeTimeoffsByService');
 
-    Route::get('getManagerByService/{ServiceId}','EmployeeController@getManagerByService');
+    Route::get('getmanagerbyservice/{ServiceId}','EmployeeController@getManagerByService');
+
+    Route::get('getagentsbymanager/{serviceId}','EmployeeController@getAgentsByManager');
 
     //=======================Récupération de toutes les FormationDetail
     Route::get('servicedetails', 'ServiceDetailController@all');
