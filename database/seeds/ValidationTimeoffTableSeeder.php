@@ -13,14 +13,14 @@ class ValidationTimeoffTableSeeder extends Seeder
     {
         DB::table('validation_timeoffs')->insert([
             'form_timeoff_id' => 1,
-            'employee_id' => 5,
+            'employee_id' => 4,
             'manager_id' => 3,
             'validate' => 1,
             'manager_validation_date' => "2018-09-11 11:30:00"
         ]);
         DB::table('validation_timeoffs')->insert([
             'form_timeoff_id' => 2,
-            'employee_id' => 5,
+            'employee_id' => 4,
             'manager_id' => 3,
             'validate' => 1,
             'manager_validation_date' => "2018-10-11 08:00:00"
@@ -40,8 +40,8 @@ class ValidationTimeoffTableSeeder extends Seeder
             'manager_validation_date' => "2018-09-25 11:30:00"
         ]);
         DB::table('validation_timeoffs')->insert([
-            'form_timeoff_id' => 2,
-            'employee_id' => 4,
+            'form_timeoff_id' => 5,
+            'employee_id' => 5,
             'manager_id' => 2,
             'validate' => 1,
             'manager_validation_date' => "2018-09-30 11:30:00"

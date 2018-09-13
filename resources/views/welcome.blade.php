@@ -9,16 +9,18 @@
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
-
+        <link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}" type="image/x-icon">
         <!-- Styles -->
         <style>
             html, body {
-                background-color: #fff;
+                background-image: url("{{ asset('images/logo-TNT.png') }}");
                 color: #636b6f;
                 font-family: 'Raleway', sans-serif;
                 font-weight: 100;
                 height: 100vh;
                 margin: 0;
+                background-repeat: no-repeat;
+                background-size: contain;
             }
 
             .full-height {
@@ -71,8 +73,8 @@
                     @auth
                         <a href="{{ url('/home') }}">Home</a>
                     @else
-                        <a href="{{ route('login') }}">Login</a>
-                        <a href="{{ route('register') }}">Register</a>
+                        <a href="{{ route('login') }}">Se connecter</a>
+                        <a href="{{ route('register') }}">S'inscrire</a>
                     @endauth
                 </div>
             @endif

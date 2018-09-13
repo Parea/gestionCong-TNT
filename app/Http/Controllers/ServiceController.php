@@ -6,7 +6,8 @@ use App\Service;
 use App\User;
 use App\Employee;
 use App\ServiceDetail;
-use App\Http\Resources\Formation as FormationR;
+use App\ValidationTimeoff;
+use App\Http\Resources\Service as ServiceR;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth; 
@@ -54,24 +55,24 @@ class ServiceController extends Controller {
     endif;
   }
 
-  public function getServicesOfManager() {
+  public function getServicesOfManager($serviceId) {
+    
     $manager = Auth::user();
 
     if($manager->user_type_id == 3):
-      $myServices = ServiceDetail::
-        select(DB::raw('DISTINCT(service_details.service_id'))
-      ->join('services','services.id','=','service_details.service_id')
+      $myServices = ServiceDetail::select(DB::raw('DISTINCT(service_details.service_id) as service_id,
+      services.id as service_id,services.name as nom_service,services.color as couleur'))
+      ->join('services','services.id','service_details.service_id')
       ->where('service_details.manager_id',$manager->id)
       ->paginate(20);
       
       foreach($myServices as $key=>$myService):
-        $employee = ServiceDetail::where('manager_id', Auth::user()->id)
-        ->select('employees.id', 'employees.timeoff_granted', 'employees.timeoff_in_progress', 'employees.taken_timeoff', 'employees.total_timeoff','employees.user_id')
-        ->join('users','users.id','employees.user_id')
-        ->join('employees','employees.id','service_details.employee_id')
+        $employee = User::select('users.id')
+        ->join('employees','employees.user_id','users.id')
+        ->where('employees.service_id',$serviceId)
         ->get();
 
-        $myServices[$key]['employees'] = $employee;
+        $myServices[$key]['total_employees'] = $employee->count();
       endforeach;
       return Response::json($myServices);
     else:
@@ -79,36 +80,101 @@ class ServiceController extends Controller {
     endif;
   }
 
-  public function getAllServicesForDirector(){
+  public function getAllServicesForDirectorAndAdmin(){
+    $userAuthorized = [1, 2];
     $manager = Auth::user();
+    $employeeData = [];
 
-    if($manager->user_type_id == 2):
+    if(in_array(Auth::user()->user_type_id, $userAuthorized)):
       $myServices = Service::all()->toArray();
+      
       foreach($myServices as $key=> $myService):
-        $employees = User::select('service_details.employee_id')
-        ->join('service_details','service_details.employee_id','users.id')
-        ->grouptBy('service_detals.employee_id')
-        ->where('service_details.service_id',$myService['id'])
-        ->get();
 
         $managers = User::select('service_details.manager_id')
-        ->join('service_details','service_details.manager_id','users.id')
-        ->groupBy('service_details.manager_id')
-        ->where('service_details.service_id',$myService['id'])
-        ->get();
+          ->join('service_details','service_details.manager_id','users.id')
+          ->groupBy('service_details.manager_id')
+          ->where('service_details.service_id',$myService['id'])
+          ->get();
 
-        $timeoffs = Employee::where('service_details.employee_id', $myService['id'])
-        ->join('employees','employee.id','service_details.employee_id')
-        ->get();
+        // $employees = Employee::select('employees.id as employe_id',
+        //   'employees.timeoff_granted as Congé_obtenu')
+        //   ->join('users','users.id','employees.user_id')
+        //   ->groupBy('employees.id')
+        //   ->where('employees.service_id',$myService['id'])
+        //   ->get();
 
-        $myServices[$key]['total_employees'] = $employees->count();
-        $myServices[$key]['total_managers'] = $managers->count();
-        $myServices[$key]['total_timeoffs'] = $timeoffs->count();
+        $employeeData = Employee::select('employees.id as employee_id',
+          'users.lastname as Nom',
+          'users.firstname as Prenom',
+          'services.id as service_id',
+          'services.name as Nom_service',
+          'employees.timeoff_granted as congées obtenu',
+          'employees.taken_timeoff as congées pris',
+          'employees.total_timeoff as congées restant')
+          ->join('services','services.id','employees.service_id')
+          ->join('users','users.id','employees.user_id')
+          ->orderBy('employees.id','desc')
+          ->where('employees.service_id',$myService['id'])
+          ->get();
+
+        $myServices[$key]['total_responsable'] = $managers->count();
+        $myServices[$key]['total_employee_by_service'] = $employeeData->count();
+        $myServices[$key]['Emloyees'] = $employeeData;
       endforeach;
 
       return Response::json($myServices);
     else:
         return Response::json(["Erreur : "=>"Vous n'avez pas les droits"]);
     endif;
+  }
+
+  public function getManagerByServiceId($serviceId){
+    $userAuthorized = [1, 2, 3];
+    if(in_array(Auth::user()->user_type_id, $userAuthorized)):
+        $managerOfService = User::select('service_details.manager_id as id', 
+        'users.lastname as lastname', 'users.firstname as firstname')
+        ->join('service_details', 'service_details.manager_id', 'users.id')
+        ->join('services','services.id','service_details.service_id')
+        ->groupBy('service_details.manager_id')
+        ->where('service_details.service_id', $serviceId)
+        ->get();
+        return Response::json($managerOfService);
+    else:
+        return Response::json(["Erreur : "=>"Vous n'avez pas les droits"]);
+    endif;
+
+  }
+
+  public function getAgentsByServiceId($serviceId){
+    $userAuthorized = [1, 2, 3];
+    if(in_array(Auth::user()->user_type_id, $userAuthorized)):
+
+        $agents = User::select('users.id as user_id','employees.id as employee_id', 'users.firstname', 'users.lastname')
+        ->join('employees', 'employees.user_id','users.id')
+        ->where('employees.service_id', $serviceId)
+        ->get();
+
+        foreach($agents as $key=>$agent):
+
+            $timeoffs = ValidationTimeoff::select('validation_timeoffs.form_timeoff_id',
+            'validation_timeoffs.manager_validation_date as date_validate',
+            'users.firstname as manager_name')
+            ->join('employees', 'employees.id', 'validation_timeoffs.employee_id')
+            ->join('users','users.id','validation_timeoffs.manager_id')
+            ->where('employees.service_id', $serviceId)
+            ->where('employees.user_id', $agent->user_id)
+            ->where('validation_timeoffs.validate', 1)
+            ->get();
+
+            $agents[$key]['total_timeoffs_validated'] = $timeoffs->count();
+            $agents[$key]['timeoff_validated'] = $timeoffs;
+            // $agents[$key]['timeoff_manager_validated'] = $timeoffValidatedManager->count();
+        endforeach;
+        return Response::json($agents);
+
+    else:
+        return Response::json(["Erreur : "=>"Vous n'avez pas les droits"]);
+    endif;
+
   }
 }

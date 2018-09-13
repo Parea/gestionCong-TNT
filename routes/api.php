@@ -51,15 +51,15 @@ use Illuminate\Http\Request;
      */
     Route::post('fillemployee', 'UserController@fillEmployee');
 
-     /*
-      * Routes pour les utilisateurs connecté en tant que student
-      */
-     Route::get('getAllServices', 'EmployeeController@getAllServices');
- 
-
+    
+    
     //***************Routes concernant le controlleur Employee****************************//
     //************************************************************************************//
 
+    /*
+      * Routes pour les utilisateurs connecté en tant que employee
+      */
+    Route::get('AllServices', 'EmployeeController@getAllServices');
     //=======================Récupération de tous les employées
     Route::get('employees','EmployeeController@all');
     //=======================Récupération d'un employé par sont ID
@@ -71,32 +71,29 @@ use Illuminate\Http\Request;
     //=======================Modification d'un employé
     Route::put('employee','EmployeeController@store');
 
-    //======================= Récupération des infos des congées de l'employé connecter => service + validation
-    Route::get('getservices', 'EmployeeController@getTimeoffAuthUser');
-    // Route::get('getServiceForAdmin/{ServiceId}', 'EmployeeController@getTimeoffByService');
+    //======================= Récupération les infos des congées de l'employé connecter => service + validation
+    Route::get('mytimeoff', 'EmployeeController@getTimeoffAuthUser');
+    //=======================Récupération de toutes les employées de chaque service
+    Route::get('employeesbyservice/{ServiceId}', 'EmployeeController@getEmployeesByServiceId');
+    //=======================Récupération de toutes les infos de chaque employées par service
+    Route::get('employeedatas/{userId}/ofservice/{ServiceId}', 'EmployeeController@getEmployeeTimeoffsByService');
+    //=======================Récupération du responsable du service 
+    Route::get('managerbyservice/{ServiceId}','EmployeeController@getManagerByService');
+    //=======================Récupération de toutes les agents du responsable par service
+    Route::get('agentsbymanager/{serviceId}','EmployeeController@getAgentsByManager');
 
-    Route::get('getemployeesbyservice/{ServiceId}', 'EmployeeController@getEmployeesByServiceId');
+    
+    //***************Routes concernant le controlleur ServiceDetail****************************//
+    //************************************************************************************//
 
-    Route::get('getemployeedatas/{userId}/ofservice/{ServiceId}', 'EmployeeController@getEmployeeTimeoffsByService');
-
-    Route::get('getmanagerbyservice/{ServiceId}','EmployeeController@getManagerByService');
-
-    Route::get('getagentsbymanager/{serviceId}','EmployeeController@getAgentsByManager');
-
-    //=======================Récupération de toutes les FormationDetail
+    //=======================Récupération de toutes les ServiceDetail
     Route::get('servicedetails', 'ServiceDetailController@all');
-    //=======================Récupération d'une formationdetail par son id
-    Route::get('formationdetail/{formationdetailsId}', 'FormationDetailController@show');
-    //=======================Création d'une formationdetail
-    Route::post('formationdetail/create', 'FormationDetailController@store');
-    //=======================Supression d'une formationdetail
-    Route::delete('formationdetail/{fformationdetailsId}', 'FormationDetailController@destroy');
-    //=======================Modification d'une formationdetail
-    Route::put('formationdetail', 'FormationDetailController@store');
-    //============Récupérer les modules de l'utilisateur connecte==============================
-    Route::get('modulesByStudent', 'FormationDetailController@getModulesByAuthUser');
-    //============Récupérer les skills de l'utilisateur connecté===============================
-    Route::get('skillsByStudent', 'FormationDetailController@getSkillsByAuthUser');
-    //============Récupérer les formations d'un formateur ======================================
-    Route::get('manager/myServices', 'ServiceController@getServicesOfManager');
+    
+    Route::get('manager/myServices/{serviceID}', 'ServiceController@getServicesOfManager');
+
+    Route::get('allServiceDirectorAndAdmin','ServiceController@getAllServicesForDirectorAndAdmin');
+
+    Route::get('managerByService/{serviceId}','ServiceController@getManagerByServiceId');
+
+    Route::get('agentsByService/{serviceId}','ServiceController@getAgentsByServiceId');
 });

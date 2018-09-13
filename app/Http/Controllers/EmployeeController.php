@@ -148,30 +148,31 @@ class EmployeeController extends Controller
                 'Prenom'=> $user->firstname,
                 'service' => $service->name,
                 'Congées_obtenue' => $employee->timeoff_granted,
-                'Congées _en_cours' => $employee->timeoff_in_progress,
+                'Congées_en_cours' => $employee->timeoff_in_progress,
                 'Congées_pris' => $employee->taken_timeoff,
                 'Congées_restant' => $employee->total_timeoff
             ];
 
-            foreach($employee as $key=>$timeoff):              
+            foreach($employee as $key=>$timeoff):  
+                $employeeDatas['employee']['TotalDemandeCongées'] = 0;
+
                 $employeeDatas['employee']['Congées_valider'] = [($validation)?[
-                    'Employee_id' => $validation->employee_id,
-                    'Responsable_id' => $validation->manager_id,
-                    // 'Validation_id' => $validation->id,
-                    'Demande_congé_id' => $validation->form_timeoff_id,
-                    'Demande_accepter' => $validation->validate,
-                    'Valider_le' => $validation->manager_validation_date,
-                ]
-                :
-                [
-                    'Employee_id' => null,
-                    'Responsable_id' => null,
-                    // 'Validation_id' => null,
-                    'Demande_congé_id' => null,
-                    'Demande_accepter' => null,
-                    'Valider_le' => null,
-                ]
-            ];
+                        'Employee_id' => $validation->employee_id,
+                        'Responsable_id' => $validation->manager_id,
+                        'Demande_congé_id' => $validation->form_timeoff_id,
+                        'Demande_accepter' => $validation->validate,
+                        'Valider_le' => $validation->manager_validation_date,
+                    ]
+                    :
+                    [
+                        'Employee_id' => null,
+                        'Responsable_id' => null,
+                        'Demande_congé_id' => null,
+                        'Demande_accepter' => null,
+                        'Valider_le' => null,
+                    ]
+                ];
+                $employeeDatas['employee']['TotalDemandeCongées']++;
             endforeach;
                 return response::json($employeeDatas);
             else:
@@ -191,22 +192,12 @@ class EmployeeController extends Controller
                 'employees.user_id as employee_id',
                 'employees.service_id as service_id',
                 'services.name as Nom_service')
-            ->join('users', 'users.id', '=', 'employees.user_id')
-            ->join('services', 'services.id', '=', 'employees.service_id')
+            ->join('users', 'users.id', 'employees.user_id')
+            ->join('services', 'services.id', 'employees.service_id')
             ->where([
-                ['employees.active', '=', '1'],
+                ['employees.active', 1],
                 ['services.id', '=', $serviceId],
             ])->get()->toArray();
-
-            $employeDatas = [];
-            $moduleId = 0;
-            $i = -1;
-
-            // foreach($serviceData as $key=>$service):
-            //     //dd($skill);
-            //     $i++;
-            //     $employeDatas[$i]['lastname'] = $service['lastname'];
-            // endforeach;
             return Response::json($serviceData);
         else:
             return response::json(["Erreur"=>"Vous n'avez pas les droits"]);
@@ -277,7 +268,7 @@ class EmployeeController extends Controller
             'employees.total_timeoff as congées restant')
             ->join('services','services.id','employees.service_id')
             ->join('users','users.id','employees.user_id')
-            ->where([['users.user_type_id','=',4],['employees.service_id','=',$serviceId]])
+            ->where([['users.user_type_id',4],['employees.service_id',$serviceId]])
             ->orderBy('employees.id','desc')
             ->get()->toArray();
 
