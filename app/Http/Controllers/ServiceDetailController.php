@@ -19,11 +19,13 @@ use Illuminate\Support\Facades\Response;
 class ServiceDetailController extends Controller {
     public function all() {
         if(Auth::user()->user_type_id == 1):
-            $servicedetails = ServiceDetail::select('service_details.id as service_details_id','service_details.service_id as service_id','employees.id as employee_id','users.firstname as manager_id')
-            ->join('employees','employees.id','=','service_details.employee_id')
-            ->join('users','users.id','=','employees.user_id')
-            ->join('users','users.id','=','service_details.manager_id')
-            ->join('services','services.id','=','service_details.service_id')
+            $servicedetails = ServiceDetail::select('service_details.service_id as service_id',
+            'services.name as service_name',
+            'service_details.id as service_details_id',
+            'employees.id as employee_id','users.firstname as name_manager')
+            ->join('employees','employees.id','service_details.employee_id')
+            ->join('users','users.id','service_details.manager_id')
+            ->join('services','services.id','service_details.service_id')
             ->paginate(25);
 
             return Response::json($servicedetails);

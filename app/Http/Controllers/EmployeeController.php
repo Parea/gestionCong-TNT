@@ -91,92 +91,82 @@ class EmployeeController extends Controller
     {
         $serviceData = User::getMyCurrentService();
         $timeoffData = Employee::getEmployeesByServiceId($serviceData->service_id);
-        $validation = ValidationTimeoff::where([['validation_timeoffs.employee_id', $serviceData->employee_id],['validation_timeoffs.validate', 1]])->get()->first();
+        $validation = ValidationTimeoff::where([['validation_timeoffs.employee_id', $serviceData->employee_id],['validation_timeoffs.validate', 1]])->get();
         $employeDatas = [];
-        $i = -1;
         
+
         foreach ($timeoffData as $key=>$timeoff):
-            $i++;
+
+            $employeDatas['Nom'] = $serviceData['Nom'];
+            $employeDatas['Prenom'] = $serviceData['Prenom'];
+            $employeDatas['Nom_service'] = $serviceData['service_name'];
             $employeDatas['Congés_obtenue'] = $timeoff['timeoff_granted'];
             $employeDatas['Congés_en_cours'] = $timeoff['timeoff_in_progress'];
             $employeDatas['Congées_pris'] = $timeoff['taken_timeoff'];
             $employeDatas['Congées_restant'] = $timeoff['total_timeoff'];
-
-            $employeDatas['Congées_valider'] = [($validation)?[
-                    'Valider_le' => $validation->manager_validation_date,
-                    'Employee_id' => $validation->employee_id,
-                    'Validation_id' => $validation->id,
-                    'Demande_congé_id' => $validation->form_timeoff_id,
-                    'Demande_accepter' => $validation->validate,
-                    'Responsable_id' => $validation->manager_id,
-                ]
-                :
-                [
-                    'Valider_le' => null,
-                    'Employee_id' => null,
-                    'Validation_id' => null,
-                    'Demande_congé_id' => null,
-                    'Demande_accepter' => null,
-                    'Responsable_id' => null,
-                ]
-            ];
-
-            if($validation):
-                if($validation->employee_validation) $employeDatas[$i]['validate_timeoff']++;
-                if($validation->employee_validation) $employeDatas[$i]['taken_timeoff']++;
-            endif;
+            $employeDatas['total_timeoff_taken'] = 0;
+            $employeDatas['total_timeoff_taken']++;
+            $employeDatas['Congées_valider'] = $validation;
+            
         endforeach;
 
         return response::json($employeDatas);
 
     }
 
-    public function getEmployeeTimeoffsByService($userId, $serviceId)
-    {
+    public function getEmployeeTimeoffsByService($userId, $serviceId) {
+        
         $userAuthorized = [1, 2, 3];
+        
         if(in_array(Auth::user()->user_type_id, $userAuthorized)):
+
             $service = Service::find($serviceId);
             $user = User::find($userId);
-            $employee = Employee::where([['user_id',$userId],['service_id',$serviceId],['active',1]])->first();
-            $validation = ValidationTimeoff::where([['validation_timeoffs.employee_id',$userId],['validation_timeoffs.validate', 1]])->first();
-
+            $employee = Employee::where([['user_id',$user->id],['service_id',$service->id],['active',1]])->first();
+            $validation = ValidationTimeoff::where([['validation_timeoffs.employee_id',$employee->id],['validation_timeoffs.validate', 1]])->get();
             $employeeDatas = [];
-            $i = -1;
-
+            
             $employeeDatas['employee'] = [
+                'employee_id' => $employee->id,
                 'Nom'=> $user->lastname,
                 'Prenom'=> $user->firstname,
                 'service' => $service->name,
-                'Congées_obtenue' => $employee->timeoff_granted,
-                'Congées_en_cours' => $employee->timeoff_in_progress,
-                'Congées_pris' => $employee->taken_timeoff,
-                'Congées_restant' => $employee->total_timeoff
             ];
 
-            foreach($employee as $key=>$timeoff):  
-                $employeeDatas['employee']['TotalDemandeCongées'] = 0;
-
-                $employeeDatas['employee']['Congées_valider'] = [($validation)?[
-                        'Employee_id' => $validation->employee_id,
-                        'Responsable_id' => $validation->manager_id,
-                        'Demande_congé_id' => $validation->form_timeoff_id,
-                        'Demande_accepter' => $validation->validate,
-                        'Valider_le' => $validation->manager_validation_date,
-                    ]
-                    :
-                    [
-                        'Employee_id' => null,
-                        'Responsable_id' => null,
-                        'Demande_congé_id' => null,
-                        'Demande_accepter' => null,
-                        'Valider_le' => null,
-                    ]
-                ];
-                $employeeDatas['employee']['TotalDemandeCongées']++;
+            foreach($employeeDatas as $key=>$timeoff):
+                $employeeDatas['employee']['Congées_obtenue'] = $employee->timeoff_granted;
+                $employeeDatas['employee']['Congées_en_cours'] = $employee->timeoff_in_progress;
+                $employeeDatas['employee']['Congées_pris'] = $employee->taken_timeoff;
+                $employeeDatas['employee']['Congées_restant'] = $employee->total_timeoff;
+                $employeeDatas['employee']['TotalDemandeCongéesValider'] = $validation->count();
+                $employeeDatas['employee']['Congées_valider'] = 
+                $validation;
+                
+                // [($validation)?[
+                    //         'Employee_id' => $validation->employee_id,
+                    //         'Responsable_id' => $validation->manager_id,
+                    //         'Demande_congé_id' => $validation->form_timeoff_id,
+                    //         'Demande_accepter' => $validation->validate,
+                    //         'Valider_le' => $validation->manager_validation_date,
+                    //     ]
+                    //     :
+                    //     [
+                    //         'Employee_id' => null,
+                    //         'Responsable_id' => null,
+                    //         'Demande_congé_id' => null,
+                    //         'Demande_accepter' => null,
+                    //         'Valider_le' => null,
+                    //     ]
+                    // ];
+                        
             endforeach;
+
                 return response::json($employeeDatas);
+
             else:
+
                 return Response::json(["Erreur: "=>"Vous n'avez pas les droits"]);
+            
             endif;
 
     }

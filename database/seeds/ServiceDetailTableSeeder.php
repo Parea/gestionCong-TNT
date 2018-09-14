@@ -38,9 +38,9 @@ class ServiceDetailTableSeeder extends Seeder
             'manager_id' => 3
         ]);
         DB::table('service_details')->insert([
-            'service_id' => 2,
+            'service_id' => 1,
             'employee_id' => 8,
-            'manager_id' => 2
+            'manager_id' => 4
         ]);
         DB::table('service_details')->insert([
             'service_id' => 3,

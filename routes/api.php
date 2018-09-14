@@ -76,24 +76,26 @@ use Illuminate\Http\Request;
     //=======================Récupération de toutes les employées de chaque service
     Route::get('employeesbyservice/{ServiceId}', 'EmployeeController@getEmployeesByServiceId');
     //=======================Récupération de toutes les infos de chaque employées par service
-    Route::get('employeedatas/{userId}/ofservice/{ServiceId}', 'EmployeeController@getEmployeeTimeoffsByService');
+    Route::get('employeeTimeoff/{userId}/byservice/{ServiceId}', 'EmployeeController@getEmployeeTimeoffsByService');
     //=======================Récupération du responsable du service 
     Route::get('managerbyservice/{ServiceId}','EmployeeController@getManagerByService');
     //=======================Récupération de toutes les agents du responsable par service
     Route::get('agentsbymanager/{serviceId}','EmployeeController@getAgentsByManager');
 
     
-    //***************Routes concernant le controlleur ServiceDetail****************************//
+    //***************Routes concernant le controlleur Services****************************//
     //************************************************************************************//
 
-    //=======================Récupération de toutes les ServiceDetail
+    //=======================Récupération de toutes les Services
     Route::get('servicedetails', 'ServiceDetailController@all');
     
-    Route::get('manager/myServices/{serviceID}', 'ServiceController@getServicesOfManager');
+    Route::get('myServices/{serviceID}', 'ServiceController@getEmployeeServicesOfManager');
 
     Route::get('allServiceDirectorAndAdmin','ServiceController@getAllServicesForDirectorAndAdmin');
 
     Route::get('managerByService/{serviceId}','ServiceController@getManagerByServiceId');
 
     Route::get('agentsByService/{serviceId}','ServiceController@getAgentsByServiceId');
-});
+
+    Route::get('employeeTakenTimeoffByService/{serviceId}','ServiceController@getEmployeeTakenTimeoffByServiceId');
+  });

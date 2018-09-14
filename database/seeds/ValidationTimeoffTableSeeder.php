@@ -23,28 +23,42 @@ class ValidationTimeoffTableSeeder extends Seeder
             'employee_id' => 4,
             'manager_id' => 3,
             'validate' => 1,
-            'manager_validation_date' => "2018-10-11 08:00:00"
+            'manager_validation_date' => "2018-09-25 11:30:00"
         ]);
         DB::table('validation_timeoffs')->insert([
             'form_timeoff_id' => 3,
             'employee_id' => 3,
             'manager_id' => 2,
-            'validate' => 1,
-            'manager_validation_date' => "2018-10-11 11:30:00"
+            'validate' => 0,
+            'manager_validation_date' => "2018-09-30 11:30:00"
         ]);
         DB::table('validation_timeoffs')->insert([
             'form_timeoff_id' => 4,
             'employee_id' => 3,
             'manager_id' => 2,
             'validate' => 1,
-            'manager_validation_date' => "2018-09-25 11:30:00"
+            'manager_validation_date' => "2018-10-11 08:00:00"
         ]);
         DB::table('validation_timeoffs')->insert([
             'form_timeoff_id' => 5,
-            'employee_id' => 5,
+            'employee_id' => 4,
+            'manager_id' => 3,
+            'validate' => 1,
+            'manager_validation_date' => "2018-10-11 11:30:00"
+        ]);
+        DB::table('validation_timeoffs')->insert([
+            'form_timeoff_id' => 6,
+            'employee_id' => 2,
             'manager_id' => 2,
             'validate' => 1,
-            'manager_validation_date' => "2018-09-30 11:30:00"
+            'manager_validation_date' => "2018-11-01 00:00:00"
+        ]);
+        DB::table('validation_timeoffs')->insert([
+            'form_timeoff_id' => 7,
+            'employee_id' => 2,
+            'manager_id' => 2,
+            'validate' => 0,
+            'manager_validation_date' => "2018-11-15 00:00:00"
         ]);
     }
 }
