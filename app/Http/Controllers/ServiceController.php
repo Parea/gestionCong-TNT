@@ -198,36 +198,44 @@ class ServiceController extends Controller {
   }
 
   public function getEmployeeTakenTimeoffByServiceId($serviceId){
+    
     if(Auth::user()->user_type_id == 1):
         
       $timeoffs = User::select('users.id as user_id',
       'employees.id as employee_id', 
-      'users.lastname','users.firstname')
+      'users.lastname as Nom','users.firstname as Prenom')
       ->join('employees', 'employees.user_id','users.id')
       ->where('employees.service_id', $serviceId)
       ->get();
 
       foreach($timeoffs as $key=>$timeoff):
 
-        $timeoffValidated = ValidationTimeoff::select('validation_timeoffs.id')
+        $timeoffValidated = ValidationTimeoff::select('validation_timeoffs.id',
+        'validation_timeoffs.form_timeoff_id','validation_timeoffs.manager_id',
+        'validation_timeoffs.validate','validation_timeoffs.manager_validation_date')
         ->join('employees','employees.id','validation_timeoffs.employee_id')
         ->join('users','users.id','validation_timeoffs.manager_id')
         ->where('employees.service_id',$serviceId)
         ->where('employees.user_id',$timeoff->user_id)
-        ->where('validation_timeoffs.validate', 1)
+        ->where('validation_timeoffs.validate','=',1)
         ->get();
 
-        $timeoffNotValidated = ValidationTimeoff::select('validation_timeoffs.id')
+        $timeoffNotValidated = ValidationTimeoff::select('validation_timeoffs.id',
+        'validation_timeoffs.form_timeoff_id','validation_timeoffs.manager_id',
+        'validation_timeoffs.validate','validation_timeoffs.manager_validation_date')
         ->join('employees','employees.id','validation_timeoffs.employee_id')
         ->join('users','users.id','validation_timeoffs.manager_id')
         ->where('employees.service_id',$serviceId)
         ->where('employees.user_id',$timeoff->user_id)
-        ->where('validation_timeoffs.validate', 0)
+        ->where('validation_timeoffs.validate','=', 0)
         ->get();
 
 
-        $timeoffs[$key]['total_timeoff_validated'] = $timeoffValidated->count();
-        $timeoffs[$key]['total_not_timeoff_validated'] = $timeoffNotValidated->count();
+        $timeoffs[$key]['TotalDemandeCongésValider'] = $timeoffValidated->count();
+        $timeoffs[$key]['DemandeCongésValider'] = $timeoffValidated;
+        
+        $timeoffs[$key]['TotalDemandeCongésAttente'] = $timeoffNotValidated->count();
+        $timeoffs[$key]['DemandeCongésAttente'] = $timeoffNotValidated;
           
       endforeach;
       

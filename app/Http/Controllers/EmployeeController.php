@@ -104,8 +104,7 @@ class EmployeeController extends Controller
             $employeDatas['Congés_en_cours'] = $timeoff['timeoff_in_progress'];
             $employeDatas['Congées_pris'] = $timeoff['taken_timeoff'];
             $employeDatas['Congées_restant'] = $timeoff['total_timeoff'];
-            $employeDatas['total_timeoff_taken'] = 0;
-            $employeDatas['total_timeoff_taken']++;
+            $employeDatas['TotalCongésValider'] =  $validation->count();
             $employeDatas['Congées_valider'] = $validation;
             
         endforeach;
@@ -171,8 +170,7 @@ class EmployeeController extends Controller
 
     }
 
-    public function getEmployeesByServiceId($serviceId)
-    {
+    public function getEmployeesByServiceId($serviceId){
         $userAuthorized = [1, 2, 3];
         if(in_array(Auth::user()->user_type_id, $userAuthorized)):
             $serviceData = Employee::select(
@@ -268,8 +266,7 @@ class EmployeeController extends Controller
         endif;
     }
 
-    public function createEmployee(Request $request)
-    {
+    public function createEmployee(Request $request) {
         if(Auth::user()->user_type_id == 1):
             $validator = Validator::make($request->all(), [
                 'lastname' => 'required',
