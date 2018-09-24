@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Reva'),
 
     /*
     |--------------------------------------------------------------------------
@@ -174,7 +174,7 @@ return [
     */
 
     'aliases' => [
-
+        'Carbon' => 'Carbon\Carbon',
         'App' => Illuminate\Support\Facades\App::class,
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
         'Auth' => Illuminate\Support\Facades\Auth::class,

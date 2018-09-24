@@ -16,7 +16,7 @@ class CreateFormTimeoffsTable extends Migration
         Schema::create('form_timeoffs', function (Blueprint $table) {
             $table->increments('id');
             $table->string('motif');
-            $table->text('other_motif');
+            $table->text('other_motif')->nullable();
             $table->datetime('start_timeoff');
             $table->datetime('end_timeoff');
             $table->integer('numbers_days_taken');
