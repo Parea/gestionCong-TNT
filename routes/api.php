@@ -42,10 +42,15 @@ use Illuminate\Http\Request;
      /*
      * Les trois routes qui suivents permettent de récupérer les différents type d'utilisateur présent dans l'api
      */
-     Route::get('users/admin','UserController@listUsersAdmin');
-     Route::get('users/employee','UserController@listUsersEmployee');
-     Route::get('users/manager','UserController@listUsersManager');
- 
+    Route::get('users/admin','UserController@listUsersAdmin');
+    Route::get('users/employee','UserController@listUsersEmployee');
+    Route::get('users/manager','UserController@listUsersManager');
+    Route::put('user/update', 'UserController@update');
+     
+    /**
+      * Créer un nouveau employé
+      */
+    Route::post('createEmployee', 'EmployeeController@createEmployee');
      /*
      * Affiliation d'un employé à un service
      */
@@ -59,7 +64,7 @@ use Illuminate\Http\Request;
     /*
       * Routes pour les utilisateurs connecté en tant que employee
       */
-    Route::get('AllServices', 'EmployeeController@getAllServices');
+    Route::get('EmployeesAllServices', 'EmployeeController@getAllServices');
     //=======================Récupération de tous les employées
     Route::get('employees','EmployeeController@all');
     //=======================Récupération d'un employé par sont ID
@@ -98,4 +103,10 @@ use Illuminate\Http\Request;
     Route::get('agentsByService/{serviceId}','ServiceController@getAgentsByServiceId');
 
     Route::get('employeeTakenTimeoffByService/{serviceId}','ServiceController@getEmployeeTakenTimeoffByServiceId');
+
+    
+    
+    Route::get('validationTimeoffByEmployee','ValidationTimeoffController@validationByEmployee');
+
+    Route::put('validation/updateManagerValidationTimeoff','ValidationTimeoffController@updateManagerValidationTimeoff');
   });
