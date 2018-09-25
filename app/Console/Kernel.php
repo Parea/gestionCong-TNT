@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        // \App\Console\Commands\Inspire::class,
     ];
 
     /**
@@ -24,8 +24,27 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->call(function () {
+            $users = DB::table('users')
+              ->select('id')
+              ->groupBy('id')
+              ->get();
+       
+            foreach($users as $user)
+            {
+              DB::table('employees')
+                ->where('user_id', $user->user_id)
+                ->increment(['timeoff_granted',2.5]);
+            }
+          })->monthlyOn(1, '01:00');
+
+          
+        // $schedule->call(function () {
+        //     DB::table('employees')
+        //     ->where('id')
+        //     ->increment('timeoff_granted', +2.5);
+        // })->monthlyOn(1, '01:00');
+    
     }
 
     /**

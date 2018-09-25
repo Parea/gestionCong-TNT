@@ -168,29 +168,29 @@ class ServiceController extends Controller {
     $userAuthorized = [1, 2];
     if(in_array(Auth::user()->user_type_id, $userAuthorized)):
 
-        $agents = User::select('users.id as user_id',
-        'employees.id as employee_id', 'users.firstname', 'users.lastname')
-        ->join('employees', 'employees.user_id','users.id')
+      $agents = User::select('users.id as user_id',
+      'employees.id as employee_id', 'users.firstname', 'users.lastname')
+      ->join('employees', 'employees.user_id','users.id')
+      ->where('employees.service_id', $serviceId)
+      ->get();
+
+      foreach($agents as $key=>$agent):
+
+        $timeoffs = ValidationTimeoff::select('validation_timeoffs.form_timeoff_id',
+        'validation_timeoffs.manager_validation_date as date_validate',
+        'users.firstname as manager_name')
+        ->join('employees', 'employees.id', 'validation_timeoffs.employee_id')
+        ->join('users','users.id','validation_timeoffs.manager_id')
         ->where('employees.service_id', $serviceId)
+        ->where('employees.user_id', $agent->user_id)
+        ->where('validation_timeoffs.validate', 1)
         ->get();
 
-        foreach($agents as $key=>$agent):
-
-            $timeoffs = ValidationTimeoff::select('validation_timeoffs.form_timeoff_id',
-            'validation_timeoffs.manager_validation_date as date_validate',
-            'users.firstname as manager_name')
-            ->join('employees', 'employees.id', 'validation_timeoffs.employee_id')
-            ->join('users','users.id','validation_timeoffs.manager_id')
-            ->where('employees.service_id', $serviceId)
-            ->where('employees.user_id', $agent->user_id)
-            ->where('validation_timeoffs.validate', 1)
-            ->get();
-
-            $agents[$key]['total_timeoffs_validated'] = $timeoffs->count();
-            $agents[$key]['timeoff_validated'] = $timeoffs;
-            // $agents[$key]['timeoff_manager_validated'] = $timeoffValidatedManager->count();
-        endforeach;
-        return Response::json($agents);
+        $agents[$key]['TotalCongésValider'] = $timeoffs->count();
+        $agents[$key]['CongésValider'] = $timeoffs;
+        // $agents[$key]['timeoff_manager_validated'] = $timeoffValidatedManager->count();
+      endforeach;
+      return Response::json($agents);
 
     else:
         return Response::json(["Erreur : "=>"Vous n'avez pas les droits"]);
