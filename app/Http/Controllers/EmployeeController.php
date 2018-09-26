@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
-
+use Carbon;
 
 class EmployeeController extends Controller
 {
@@ -92,6 +92,7 @@ class EmployeeController extends Controller
         $serviceData = User::getMyCurrentService();
         $timeoffData = Employee::getEmployeesByServiceId($serviceData->service_id);
         $validation = ValidationTimeoff::where([['validation_timeoffs.employee_id', $serviceData->employee_id],['validation_timeoffs.validate', 1]])->get();
+        $notValidation = ValidationTimeoff::where([['validation_timeoffs.employee_id', $serviceData->employee_id],['validation_timeoffs.validate', 0]])->get();
         $employeDatas = [];
         
 
@@ -104,8 +105,10 @@ class EmployeeController extends Controller
             $employeDatas['Congés_en_cours'] = $timeoff['timeoff_in_progress'];
             $employeDatas['Congées_pris'] = $timeoff['taken_timeoff'];
             $employeDatas['Congées_restant'] = $timeoff['total_timeoff'];
-            $employeDatas['TotalCongésValider'] =  $validation->count();
-            $employeDatas['Congées_valider'] = $validation;
+            $employeDatas['TotalDemandeongésValider'] =  $validation->count();
+            $employeDatas['CongésValider'] = $validation;
+            $employeDatas['TotalDemandeNonValider'] =  $notValidation->count();
+            $employeDatas['CongésAttente'] = $notValidation;
             
         endforeach;
 
@@ -171,6 +174,7 @@ class EmployeeController extends Controller
     }
 
     public function getEmployeesByServiceId($serviceId){
+        
         $userAuthorized = [1, 2, 3];
         if(in_array(Auth::user()->user_type_id, $userAuthorized)):
             $serviceData = Employee::select(
@@ -322,4 +326,25 @@ class EmployeeController extends Controller
         endif;
     }
 
+    public function addTimeoffByMonth(){
+        $dateS = Carbon::now()->startOfMonth(); 
+        if($user->user_type_id == 2):
+            $input = $request->all();
+            $values=array(
+                'student_validation' => $input['student_validation'],
+                'student_validation_date' => date('Y-m-d H:m:s'),
+
+            );
+            $progression = DB::table('progressions')->select('progressions.student_validation', 'progressions.student_validation_date','progressions.updated_at as progressions_updated_at')
+                ->join('skills', 'skills.id','progressions.skill_id')
+                ->join('formation_details', 'formation_details.module_id', 'skills.module_id')
+                ->where('formation_details.module_id', $input['module_id'])
+                ->where('progressions.student_id', $input['student_id'])
+                ->update($values);
+
+            return Response::json('succès');
+        else:
+            return Response::json("Vous n'avez pas les droits");
+        endif;
+    }
 }

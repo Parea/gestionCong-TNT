@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        // \App\Console\Commands\Inspire::class,
     ];
 
     /**
@@ -22,8 +22,7 @@ class Kernel extends ConsoleKernel
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
-    protected function schedule(Schedule $schedule)
-    {
+    protected function schedule(Schedule $schedule){
         // the call method
     $schedule->call(function () {
         $users = DB::table('users')
