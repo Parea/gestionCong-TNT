@@ -56,6 +56,34 @@ class ServiceController extends Controller {
     endif;
   }
 
+  public function getServicesOfManager() 
+  {
+    $managers = Auth::user();
+    // Check if the logged user is a teacher
+    if($managers->user_type_id == 3):
+        $myServices = ServiceDetail::
+          select(DB::raw('DISTINCT(service_details.service_id) as id, 
+              services.name, 
+              services.color'))
+          ->join('services','services.id','=','service_details.service_id')
+          ->where('service_details.manager_id',$managers->id)
+          ->paginate(25);
+          
+          foreach($myServices as $key=> $myservice):
+              
+            $user = User::select('users.id')
+              ->join('employees', 'employees.user_id', 'users.id')
+              ->where('employees.service_id',$myservice->id )
+              ->get();
+
+            $myServices[$key]['total_employees'] = $user->count();
+          endforeach;
+
+        return Response::json($myServices);
+    else:
+        return Response::json(["Erreur : "=>"Vous n'avez pas les droits"]);
+    endif;
+  }
 
   public function getEmployeeServicesOfManager($serviceId) {
     
@@ -243,5 +271,41 @@ class ServiceController extends Controller {
     else:
       return Response::json(["Erreur : "=>"Vous n'avez pas les droits"]);
     endif;
+  }
+
+  /**
+   * Get total services
+   */
+  public function getTotalService()
+  {
+      $services = Formation::select('id')->get()->count();
+      return Response::json($services);
+  }
+
+  /**
+   * Get total employees
+   */
+  public function getTotalEmployee()
+  {
+      $employees = User::select('id')->where('user_type_id', 3)->get()->count();
+      return Response::json($employees);
+  }
+
+  /**
+   * Get total managers
+   */
+  public function getTotalManager()
+  {
+      $managers = User::select('id')->where('user_type_id', 2)->get()->count();
+      return Response::json($managers);
+  }
+
+  /**
+   * Get Total Timeoff Validated By Managers
+   */
+  public function getTotalTimeoffValidatedByManagers()
+  {
+      $timeoffsValidatedByManagers = ValidationTimeoff::select('id')->where('teacher_validation', 1)->get()->count();
+      return Response::json($timeoffsValidatedByManagers);
   }
 }

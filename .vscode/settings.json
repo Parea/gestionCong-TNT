@@ -1,4 +1,4 @@
 {
     "git.ignoreLimitWarning": true,
-    "scm.alwaysShowProviders": true
+    "scm.alwaysShowProviders": true,
 }

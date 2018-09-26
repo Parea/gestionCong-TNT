@@ -56,11 +56,8 @@ use Illuminate\Http\Request;
      */
     Route::post('fillemployee', 'UserController@fillEmployee');
 
-    
-    
     //***************Routes concernant le controlleur Employee****************************//
     //************************************************************************************//
-
     /*
       * Routes pour les utilisateurs connecté en tant que employee
       */
@@ -75,7 +72,6 @@ use Illuminate\Http\Request;
     Route::delete('employee/{employeeID}','EmployeeController@destroy');
     //=======================Modification d'un employé
     Route::put('employee','EmployeeController@store');
-
     //======================= Récupération les infos des congées de l'employé connecter => service + validation
     Route::get('mytimeoff', 'EmployeeController@getTimeoffAuthUser');
     //=======================Récupération de toutes les employées de chaque service
@@ -90,7 +86,6 @@ use Illuminate\Http\Request;
     
     //***************Routes concernant le controlleur Services****************************//
     //************************************************************************************//
-
     //=======================Récupération de toutes les Services
     Route::get('servicedetails', 'ServiceDetailController@all');
     
@@ -104,7 +99,29 @@ use Illuminate\Http\Request;
 
     Route::get('employeeTakenTimeoffByService/{serviceId}','ServiceController@getEmployeeTakenTimeoffByServiceId');
 
+
+    //***************Routes concernant le controlleur ServiceDetailController****************************//
+    //*******************************************************************************************************//
+    //=======================Récupération de toutes les ServiceDetail
+    Route::get('servicedetails', 'ServiceDetailController@all');
+    //=======================Récupération d'une servicedetail par son id
+    Route::get('servicedetail/{servicedetailId}', 'ServiceDetailController@show');
+    //=======================Création d'une servicedetail
+    Route::post('servicedetail/create', 'ServiceDetailController@store');
+    //=======================Supression d'une servicedetail
+    Route::delete('servicedetail/{servicedetailId}', 'ServiceDetailController@destroy');
+    //=======================Modification d'une servicedetail
+    Route::put('servicedetail', 'ServiceDetailController@store');
+    //============Récupérer les congées de l'utilisateur connecte==============================
+    // Route::get('timeoffsByEmployee', 'ServiceDetailController@getRemainingTimeoffByAuthUser');
+    //============Récupérer les services d'un responsable ======================================
+    Route::get('manager/myServices', 'ServiceController@getServicesOfManager');
     
+
+    //***************Routes concernant le controlleur ValidationTimeoffs****************************//
+    //************************************************************************************//
+    //=======================Récupération de toutes les ValidationTimeoffs
+    Route::get('getTotalValidation','ValidationTimeoffController@getTotalValidation');
     
     Route::get('validationTimeoffByEmployee','ValidationTimeoffController@validationByEmployee');
 
