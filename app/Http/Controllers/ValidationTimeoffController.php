@@ -21,15 +21,15 @@ class ValidationTimeoffController extends Controller {
 		$authUserId = Auth::user();
 
 		if($authUserId == 1):
-				$validations = ValidationTimeoff::select('validation_timeoffs.id as validation_id',
-				'employee_id','manager_id','manager_validation_date',
-				'users.lastname as student_name')
-				->join('users','users.id','validation_timeoffs.employee_id')
-				->paginate(25);
-				
-				return Response::json($validations);
+			$validations = ValidationTimeoff::select('validation_timeoffs.id as validation_id',
+			'employee_id','manager_id','manager_validation_date',
+			'users.lastname as student_name')
+			->join('users','users.id','validation_timeoffs.employee_id')
+			->paginate(25);
+			
+			return Response::json($validations);
 		else:
-				return Response::json("Vous n'avez pas les droits");
+			return Response::json("Vous n'avez pas les droits");
 		endif;
   }
 
@@ -88,17 +88,17 @@ class ValidationTimeoffController extends Controller {
 	public function updateManagerValidationTimeoff(Request $request){
 		$userAuthorized = [2, 3];
 		if(in_array(Auth::user()->user_type_id, $userAuthorized)):
-				$input = $request->all();
-				$validations = ValidationTimeoff::find($input['validation_timeoff_id']);
-				$validations->manager_id = $input['manager_id'];
-				$validations->validate = $input['validate'];
-				$validations->manager_validation_date = date('Y-m-d H:m:s');
-				$validations->save();
+			$input = $request->all();
+			$validations = ValidationTimeoff::find($input['validation_timeoff_id']);
+			$validations->manager_id = $input['manager_id'];
+			$validations->validate = $input['validate'];
+			$validations->manager_validation_date = date('Y-m-d H:m:s');
+			$validations->save();
 
 
-				return Response::json('succès');
+			return Response::json('succès');
 		else:
-				return Response::json("Vous n'avez pas les droits");
+			return Response::json("Vous n'avez pas les droits");
 		endif;
 	}
 }

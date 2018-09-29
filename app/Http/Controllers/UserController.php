@@ -21,18 +21,21 @@ class UserController extends Controller {
 
 	//Cet fonction permet a l'utilisateur de ce connecter avec son email et mot de passe
 	public function login() {
+		
 		if(Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
 			$user = Auth::user();
-			$employee = ($user->user_type_id == 3)?Employee::select('*')->where('user_id', $user->id)->where('active', 1)->get()->first():null;
+			$employee = Employee::select('*')->where('user_id', $user->id)->where('active', 1)->get()->first();
 
 			$success['token'] = $user->createToken('Laravel')->accessToken;
+			$success['user_id'] = $user->id;
 			$success['lastname'] = $user->lastname;
 			$success['firstname'] = $user->firstname;
 			$success['email'] = $user->email;
-			$success['user_type_id'] = $user->user_type_id;
 			$success['avatar'] = $user->avatar;
-			$success['employee_id'] = ($employee)?$employee->id:0;
-			$success['service_id'] = ($employee)?$employee->service_id:0;
+			$success['gender'] = $user->gender;
+			$success['user_type_id'] = $user->user_type_id;
+			$success['employee_id'] = $employee->id;
+			$success['service_id'] = $employee->service_id;
 			// $success['timeoff_granted'] = ($employee)?$employee->timeoff_granted:25;
 			return Response::json($success);
 		}

@@ -23,8 +23,8 @@ class ServiceController extends Controller {
   }
 
   public function show($serviceId) {
-    $service = Service::select('id', 'name', 'color')
-    ->where('id', $serviceId)
+    $service = Service::select('services.id', 'services.name', 'services.color')
+    ->where('services.id', $serviceId)
     ->get()->first();
     return Response::json($serviceId);
   }

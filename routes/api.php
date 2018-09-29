@@ -126,4 +126,13 @@ use Illuminate\Http\Request;
     Route::get('validationTimeoffByEmployee','ValidationTimeoffController@validationByEmployee');
 
     Route::put('validation/updateManagerValidationTimeoff','ValidationTimeoffController@updateManagerValidationTimeoff');
+  
+
+    //***************Routes concernant le controlleur FormTimeoffs****************************//
+    //************************************************************************************//
+    //=======================Récupération de toutes les FormTimeoffs
+
+    Route::get('formtimeoffs','FormTimeoffController@all');
+
+    Route::get('formtimeoff/{formId}','FormTimeoffController@show');
   });
