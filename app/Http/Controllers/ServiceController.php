@@ -17,6 +17,58 @@ use Illuminate\Support\Facades\Input;
 use Carbon;      
 
 class ServiceController extends Controller {
+
+  public function getAgentsFormation(){
+      
+    $auth = Auth::user();
+    // Check if the logged user is a teacher
+    if($auth->user_type_id == 4):
+        $myServices = Service::select('services.*')
+        ->join('employees', 'employees.service_id', 'services.id')
+        ->join('users', 'users.id', 'employees.user_id')
+        ->where('employees.user_id', $auth->id)->get()
+            ->toArray();
+        
+            foreach($myServices as $key=>$myService):
+                $employees = User::join('employees', 'employees.user_id', 'users.id')
+                ->where('employees.service_id', $myService['id'])
+                ->get();
+
+                $TimeoffsValidatedStudent = ValidationTimeoff::join('employees', 'employees.id', 'validation_timeoffs.employee_id')
+                ->where('employees.service_id', $myService['id'])
+                ->where('validation_timeoffs.validate', 1)
+                ->get();
+
+                $TimeoffsValidatedteacher = ValidationTimeoff::join('employees', 'employees.id', 'validation_timeoffs.employee_id')
+                ->join('users','users.id','validation_timeoffs.manager_id')
+                ->where('employees.service_id', $myService['id'])
+                ->where('validation_timeoffs.validate', 1)
+                ->get();
+
+                $managers = User::select('service_details.manager_id')
+                ->join('service_details', 'service_details.manager_id', 'users.id')
+                ->groupBy('service_details.manager_id')
+                ->where('service_details.service_id', $myService['id'])
+                ->get();
+
+                // $timeoffsGranted = Employee::select('employees.id','employees.timeoff_granted')
+                // ->join('service_details', 'service_details.employee_id', 'employees.id')
+                // ->groupBy('service_details.employee_id')
+                // ->where('service_details.service_id', $myService['id'])
+                // ->get();
+
+
+                $myServices[$key]['total_agents']= $employees->count();
+                $myServices[$key]['total_managers'] = $managers->count();
+                // $myServices[$key]['total_timeoffs'] = $timeoffsGranted->count();
+            endforeach;
+            
+        return Response::json($myServices);
+    else:
+        return Response::json(["Erreur : "=>"Vous n'avez pas les droits"]);
+    endif;
+  }
+
   public function all() {
     $services = Service::select('id', 'name', 'color')->paginate(10);
     return Response::json($services);

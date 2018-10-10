@@ -116,12 +116,9 @@ class EmployeeController extends Controller
 
     }
 
-    public function getEmployeeTimeoffsByService($userId, $serviceId) {
-        
-        $userAuthorized = [1, 2, 3];
-        
-        if(in_array(Auth::user()->user_type_id, $userAuthorized)):
+    public function getEmployeeTimeoffsByService($serviceId) {
 
+            $userId = Auth::user()->id;
             $service = Service::find($serviceId);
             $user = User::find($userId);
             $employee = Employee::where([['user_id',$user->id],['service_id',$service->id],['active',1]])->first();
@@ -132,7 +129,7 @@ class EmployeeController extends Controller
                 'employee_id' => $employee->id,
                 'Nom'=> $user->lastname,
                 'Prenom'=> $user->firstname,
-                'service' => $service->name,
+                'Service' => $service->name,
             ];
 
             foreach($employeeDatas as $key=>$timeoff):
@@ -164,12 +161,6 @@ class EmployeeController extends Controller
             endforeach;
 
                 return response::json($employeeDatas);
-
-            else:
-
-                return Response::json(["Erreur: "=>"Vous n'avez pas les droits"]);
-            
-            endif;
 
     }
 
@@ -346,5 +337,28 @@ class EmployeeController extends Controller
         else:
             return Response::json("Vous n'avez pas les droits");
         endif;
+    }
+//////////////////////////////////////////////////////Partie pour affichage HTML/////////////////////////////////////////////////////////////////////////////////////////
+
+    public function HTMLall(){
+        $userTypeId = Auth::user()->user_type_id;
+        $users = Auth::user();
+        $employees = Employee::all();
+
+        $employeeTab = [];
+
+        if($userTypeId === 4):
+            foreach($employees as $employee):
+                $employeeTab[] = [
+                    'employees' => $employee->user_id,
+                    'users' => User::find($employee->user_id)
+                ];
+            endforeach;
+
+            //dd($employees);
+            return view('agents.agents', ['employees' => $employees, 'users' => $users]);
+        else:
+            return("Vous n'avez pas accés a ces informations car vous êtes pas admin");
+        endif;        
     }
 }

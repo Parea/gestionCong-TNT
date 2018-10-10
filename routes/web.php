@@ -16,4 +16,6 @@ Route::get('/', function () {
 });
 
 Auth::routes();
+Route::get('home/agents','EmployeeController@HTMLall');
+
 Route::get('/home', 'HomeController@index')->name('home');

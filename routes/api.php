@@ -77,7 +77,7 @@ use Illuminate\Http\Request;
     //=======================Récupération de toutes les employées de chaque service
     Route::get('employeesbyservice/{ServiceId}', 'EmployeeController@getEmployeesByServiceId');
     //=======================Récupération de toutes les infos de chaque employées par service
-    Route::get('employeeTimeoff/{userId}/byservice/{ServiceId}', 'EmployeeController@getEmployeeTimeoffsByService');
+    Route::get('employeeTimeoffbyservice/{ServiceId}', 'EmployeeController@getEmployeeTimeoffsByService');
     //=======================Récupération du responsable du service 
     Route::get('managerbyservice/{ServiceId}','EmployeeController@getManagerByService');
     //=======================Récupération de toutes les agents du responsable par service
@@ -88,6 +88,8 @@ use Illuminate\Http\Request;
     //************************************************************************************//
     //=======================Récupération de toutes les Services
     Route::get('servicedetails', 'ServiceDetailController@all');
+
+    Route::get('service/{serviceId}', 'ServiceController@show'); 
     
     Route::get('myServices/{serviceID}', 'ServiceController@getEmployeeServicesOfManager');
 
@@ -116,6 +118,8 @@ use Illuminate\Http\Request;
     // Route::get('timeoffsByEmployee', 'ServiceDetailController@getRemainingTimeoffByAuthUser');
     //============Récupérer les services d'un responsable ======================================
     Route::get('manager/myServices', 'ServiceController@getServicesOfManager');
+
+    Route::get('agentsService', 'ServiceController@getAgentsFormation');
     
 
     //***************Routes concernant le controlleur ValidationTimeoffs****************************//
