@@ -19,7 +19,7 @@ class CreateValidationTimeoffsTable extends Migration
             $table->integer('employee_id');
             $table->integer('manager_id');
             $table->integer('validate')->default(0);
-            $table->timestamp('manager_validation_date')->nullable();
+            $table->timestamp('validation_date')->nullable();
             $table->timestamps();
         });
     }

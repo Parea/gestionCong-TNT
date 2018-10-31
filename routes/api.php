@@ -77,7 +77,7 @@ use Illuminate\Http\Request;
     //=======================Récupération de toutes les employées de chaque service
     Route::get('employeesbyservice/{ServiceId}', 'EmployeeController@getEmployeesByServiceId');
     //=======================Récupération de toutes les infos de chaque employées par service
-    Route::get('employeeTimeoffbyservice/{ServiceId}', 'EmployeeController@getEmployeeTimeoffsByService');
+    Route::get('employeeTimeoff', 'EmployeeController@getEmployeeTimeoffs');
     //=======================Récupération du responsable du service 
     Route::get('managerbyservice/{ServiceId}','EmployeeController@getManagerByService');
     //=======================Récupération de toutes les agents du responsable par service
@@ -119,7 +119,7 @@ use Illuminate\Http\Request;
     //============Récupérer les services d'un responsable ======================================
     Route::get('manager/myServices', 'ServiceController@getServicesOfManager');
 
-    Route::get('agentsService', 'ServiceController@getAgentsFormation');
+    Route::get('agentsService', 'ServiceController@getAgentsService');
     
 
     //***************Routes concernant le controlleur ValidationTimeoffs****************************//
@@ -133,9 +133,17 @@ use Illuminate\Http\Request;
   
 
     //***************Routes concernant le controlleur FormTimeoffs****************************//
+
     //************************************************************************************//
     //=======================Récupération de toutes les FormTimeoffs
-
+    /**
+     * Route de test
+     */
+    Route::post('test','FormTimeoffController@managerValidation');
+    /**
+     * Route pour la création d'un congé
+     */
+    Route::post('formtimeoff/create', 'FormTimeoffController@store');
     Route::get('formtimeoffs','FormTimeoffController@all');
 
     Route::get('formtimeoff/{formId}','FormTimeoffController@show');

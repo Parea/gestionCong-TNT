@@ -19,8 +19,12 @@ class CreateFormTimeoffsTable extends Migration
             $table->text('other_motif')->nullable();
             $table->datetime('start_timeoff');
             $table->datetime('end_timeoff');
-            $table->integer('numbers_days_taken');
+            $table->float('numbers_days_taken');
             $table->integer('employee_id');
+            $table->integer('manager_id');
+            $table->integer('service_id');
+            $table->integer('validate')->default(0);
+            $table->timestamp('validation_date')->nullable();
             $table->timestamps();
         });
     }

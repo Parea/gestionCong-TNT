@@ -34,8 +34,8 @@ class UserController extends Controller {
 			$success['avatar'] = $user->avatar;
 			$success['gender'] = $user->gender;
 			$success['user_type_id'] = $user->user_type_id;
-			$success['employee_id'] = $employee->id;
-			$success['service_id'] = $employee->service_id;
+			$success['employee_id'] = ($employee)?$employee->id:0;
+			$success['service_id'] = ($employee)?$employee->service_id:0;
 			// $success['timeoff_granted'] = ($employee)?$employee->timeoff_granted:25;
 			return Response::json($success);
 		}

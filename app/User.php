@@ -49,7 +49,7 @@ class User extends Authenticatable
         ->orderBy('employees.id', 'desc')
         ->get()->first();
     } 
-    public static function getCurrentServiceOfAEmployee($serviceId)
+    public static function getCurrentServiceOfEmployee($serviceId)
     {
         return Employee::select('employees.user_id as user_id', 
         'employees.id as employee_id', 

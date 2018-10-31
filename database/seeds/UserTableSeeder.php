@@ -61,7 +61,7 @@ class UserTableSeeder extends Seeder
          'firstname' => 'Taataparea',
          'email' => 'parea.taie@hotmail.fr',
          'password' => bcrypt('pareataie'),
-         'avatar' => 'npc.png',
+         'avatar' => 'parea.jpg',
          'gender' => 'homme',
          'user_type_id' => 4,
          'created_at' => '2018-07-05 12:03:37',

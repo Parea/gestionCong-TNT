@@ -18,16 +18,16 @@ use Carbon;
 
 class ServiceController extends Controller {
 
-  public function getAgentsFormation(){
+  public function getAgentsService(){
       
     $auth = Auth::user();
-    // Check if the logged user is a teacher
-    if($auth->user_type_id == 4):
+    // Check if the logged user is a manager
+    if($auth->user_type_id == 3):
         $myServices = Service::select('services.*')
         ->join('employees', 'employees.service_id', 'services.id')
         ->join('users', 'users.id', 'employees.user_id')
         ->where('employees.user_id', $auth->id)->get()
-            ->toArray();
+        ->toArray();
         
             foreach($myServices as $key=>$myService):
                 $employees = User::join('employees', 'employees.user_id', 'users.id')
@@ -75,10 +75,10 @@ class ServiceController extends Controller {
   }
 
   public function show($serviceId) {
-    $service = Service::select('services.id', 'services.name', 'services.color')
-    ->where('services.id', $serviceId)
-    ->get()->first();
-    return Response::json($serviceId);
+    $service = Service::select('id', 'name', 'color')
+    ->where('id', $serviceId)
+    ->get();
+    return Response::json($service);
   }
 
 

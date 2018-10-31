@@ -27,14 +27,13 @@ class Kernel extends ConsoleKernel
     $schedule->call(function () {
         $users = DB::table('users')
           ->select('id')
-          ->groupBy('id')
           ->get();
    
         foreach($users as $user)
         {
           DB::table('employees')
-            ->where('user_id', $user->user_id)
-            ->increment(['timeoff_granted',2.5]);
+            ->where('id', $user->user_id)
+            ->increment('timeoff_granted',2.5);
         }
       })->monthlyOn(1, '01:00');
     }

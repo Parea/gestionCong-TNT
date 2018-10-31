@@ -23,7 +23,7 @@ class ValidationTimeoffController extends Controller {
 		if($authUserId == 1):
 			$validations = ValidationTimeoff::select('validation_timeoffs.id as validation_id',
 			'employee_id','manager_id','manager_validation_date',
-			'users.lastname as student_name')
+			'users.lastname as employee_name')
 			->join('users','users.id','validation_timeoffs.employee_id')
 			->paginate(25);
 			
@@ -92,7 +92,7 @@ class ValidationTimeoffController extends Controller {
 			$validations = ValidationTimeoff::find($input['validation_timeoff_id']);
 			$validations->manager_id = $input['manager_id'];
 			$validations->validate = $input['validate'];
-			$validations->manager_validation_date = date('Y-m-d H:m:s');
+			$validations->validation_date = date('Y-m-d H:m:s');
 			$validations->save();
 
 
